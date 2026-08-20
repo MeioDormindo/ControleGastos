@@ -3,7 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bolsa — Controle Financeiro</title>
+<meta name="description" content="MeioDormindo - Controle financeiro pessoal. Gerencie suas rendas, gastos fixos e parcelados de forma simples e visual.">
+<meta name="author" content="MeioDormindo">
+
+<!-- Meta Tags para Compartilhamento (WhatsApp, Telegram, etc) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="MeioDormindo — Controle Financeiro">
+<meta property="og:description" content="Gerencie suas rendas e gastos de forma simples, visual e direta ao ponto.">
+
+<!-- Favicon Embutido (Evita erro 404 no GitHub Pages) -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+
+<title>MeioDormindo — Controle Financeiro</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -339,19 +350,22 @@ body::before {
         </svg>
       </div>
       <div>
-        <h1 class="font-display text-xl font-bold tracking-tight">Bolsa</h1>
+        <h1 class="font-display text-xl font-bold tracking-tight">MeioDormindo</h1>
         <p class="text-[11px] text-[var(--muted)] tracking-wide">controle financeiro pessoal</p>
       </div>
     </div>
     
     <div class="flex items-center gap-2 md:gap-3 ml-auto">
-      <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--card)] border border-[var(--border)]">
-        <span class="relative flex items-center justify-center w-2 h-2">
-          <span class="online-ping absolute"></span>
-          <span class="online-dot relative"></span>
-        </span>
-        <span class="text-xs font-semibold text-[var(--fg)]" id="online-count">0</span>
-        <span class="text-xs text-[var(--muted)]">online</span>
+      <div class="hidden sm:flex flex-col items-end leading-tight">
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--card)] border border-[var(--border)]">
+          <span class="relative flex items-center justify-center w-2 h-2">
+            <span class="online-ping absolute"></span>
+            <span class="online-dot relative"></span>
+          </span>
+          <span class="text-xs font-semibold text-[var(--fg)]" id="online-count">0</span>
+          <span class="text-xs text-[var(--muted)]">online</span>
+        </div>
+        <span class="text-[10px] text-[var(--muted)] mt-1"><span id="visits-count">0</span> visitas totais</span>
       </div>
       
       <div class="relative">
@@ -383,7 +397,7 @@ body::before {
       <span class="online-dot relative"></span>
     </span>
     <span class="text-xs font-semibold text-[var(--fg)]" id="online-count-mobile">0</span>
-    <span class="text-xs text-[var(--muted)]">pessoas online</span>
+    <span class="text-xs text-[var(--muted)]">online · <span id="visits-count-mobile">0</span> visitas</span>
   </div>
   
   <section class="grid grid-cols-1 lg:grid-cols-5 gap-5 mb-6">
@@ -563,6 +577,7 @@ body::before {
 // ===== Estado e persistência =====
 const STORAGE_KEY = 'bolsa-financas-v2';
 const THEME_KEY = 'bolsa-tema';
+const VISITS_KEY = 'bolsa-visitas';
 
 const State = {
   rendas: [],
@@ -810,7 +825,7 @@ function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem(THEME_KEY, theme);
   document.querySelectorAll('.theme-dot').forEach(d => d.classList.toggle('active', d.dataset.theme === theme));
-  renderAll(); // Re-render para atualizar cores nos gráficos
+  renderAll(); 
 }
 
 function bindThemeEvents() {
@@ -836,21 +851,38 @@ function bindThemeEvents() {
   });
 }
 
-// ===== Online Counter (Simulação Realista) =====
-function initOnlineCounter() {
-  let onlineUsers = Math.floor(Math.random() * 30) + 15; // Base inicial 15-44
-  const updateCount = () => {
-    const el1 = document.getElementById('online-count');
-    const el2 = document.getElementById('online-count-mobile');
-    if (el1) el1.textContent = onlineUsers;
-    if (el2) el2.textContent = onlineUsers;
+// ===== Contadores (Online e Visitas) =====
+function initCounters() {
+  // 1. Contador de Visitas (Base local simulando um contador global)
+  let visits = parseInt(localStorage.getItem(VISITS_KEY) || '0', 10);
+  if (visits === 0) {
+    // Inicializa com um número aleatório entre 150 e 850 para parecer um site já estabelecido
+    visits = Math.floor(Math.random() * 700) + 150;
+  } else {
+    visits += 1;
+  }
+  localStorage.setItem(VISITS_KEY, visits.toString());
+  
+  const updateVisitsDisplay = () => {
+    document.getElementById('visits-count').textContent = visits.toLocaleString('pt-BR');
+    document.getElementById('visits-count-mobile').textContent = visits.toLocaleString('pt-BR');
   };
-  updateCount();
+  updateVisitsDisplay();
+  
+  // 2. Contador Online (Simulação dinâmica flutuante)
+  let onlineUsers = Math.floor(Math.random() * 25) + 12; // Base 12-37
+  
+  const updateOnlineDisplay = () => {
+    document.getElementById('online-count').textContent = onlineUsers;
+    document.getElementById('online-count-mobile').textContent = onlineUsers;
+  };
+  updateOnlineDisplay();
+  
   setInterval(() => {
-    const change = Math.floor(Math.random() * 7) - 3; // -3 a +3
-    onlineUsers = Math.max(8, Math.min(99, onlineUsers + change));
-    updateCount();
-  }, 4000 + Math.random() * 2000);
+    const change = Math.floor(Math.random() * 7) - 3; // Variação de -3 a +3
+    onlineUsers = Math.max(5, Math.min(60, onlineUsers + change));
+    updateOnlineDisplay();
+  }, 5000 + Math.random() * 3000); // Atualiza a cada 5-8 segundos
 }
 
 // ===== Eventos =====
@@ -926,7 +958,7 @@ document.addEventListener('DOMContentLoaded', () => {
   bindThemeEvents();
   bindEvents();
   renderAll();
-  initOnlineCounter();
+  initCounters();
 });
 </script>
 
