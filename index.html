@@ -12,6 +12,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <!-- Biblioteca para gerar PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -65,6 +66,46 @@
   --accent-rgb: 6, 182, 212; --accent-2-rgb: 34, 211, 238;
   --glow-1: rgba(6, 182, 212, 0.18); --glow-2: rgba(34, 211, 238, 0.10); --glow-3: rgba(234, 179, 8, 0.06);
 }
+[data-theme="graphite"] {
+  --bg: #090b0e; --card: rgba(24, 28, 34, 0.62); --card-hover: rgba(35, 40, 48, 0.82);
+  --border: rgba(148, 163, 184, 0.14); --border-strong: rgba(148, 163, 184, 0.32);
+  --fg: #f1f5f9; --muted: #788392; --muted-2: #a4afbd;
+  --accent: #94a3b8; --accent-2: #cbd5e1; --accent-3: #e2e8f0; --accent-dark: #64748b;
+  --accent-rgb: 148, 163, 184; --accent-2-rgb: 203, 213, 225;
+  --glow-1: rgba(148, 163, 184, 0.14); --glow-2: rgba(100, 116, 139, 0.10); --glow-3: rgba(226, 232, 240, 0.04);
+}
+[data-theme="obsidian"] {
+  --bg: #050505; --card: rgba(18, 18, 18, 0.72); --card-hover: rgba(30, 30, 30, 0.88);
+  --border: rgba(229, 231, 235, 0.12); --border-strong: rgba(229, 231, 235, 0.3);
+  --fg: #fafafa; --muted: #737373; --muted-2: #a3a3a3;
+  --accent: #f5f5f5; --accent-2: #d4d4d4; --accent-3: #ffffff; --accent-dark: #a3a3a3;
+  --accent-rgb: 245, 245, 245; --accent-2-rgb: 212, 212, 212;
+  --glow-1: rgba(255, 255, 255, 0.10); --glow-2: rgba(163, 163, 163, 0.07); --glow-3: rgba(255, 255, 255, 0.03);
+}
+[data-theme="black"] {
+  --bg: #000000; --card: rgba(10, 10, 10, 0.82); --card-hover: rgba(22, 22, 22, 0.94);
+  --border: rgba(255, 255, 255, 0.12); --border-strong: rgba(255, 255, 255, 0.32);
+  --fg: #ffffff; --muted: #707070; --muted-2: #a8a8a8;
+  --accent: #ffffff; --accent-2: #e5e5e5; --accent-3: #ffffff; --accent-dark: #9a9a9a;
+  --accent-rgb: 255, 255, 255; --accent-2-rgb: 229, 229, 229;
+  --glow-1: rgba(255, 255, 255, 0.09); --glow-2: rgba(255, 255, 255, 0.05); --glow-3: rgba(255, 255, 255, 0.02);
+}
+[data-theme="midnight"] {
+  --bg: #070a12; --card: rgba(16, 22, 38, 0.64); --card-hover: rgba(27, 35, 56, 0.84);
+  --border: rgba(129, 140, 248, 0.14); --border-strong: rgba(129, 140, 248, 0.34);
+  --fg: #eef2ff; --muted: #737b99; --muted-2: #a5add0;
+  --accent: #818cf8; --accent-2: #a5b4fc; --accent-3: #c7d2fe; --accent-dark: #4f46e5;
+  --accent-rgb: 129, 140, 248; --accent-2-rgb: 165, 180, 252;
+  --glow-1: rgba(79, 70, 229, 0.18); --glow-2: rgba(129, 140, 248, 0.10); --glow-3: rgba(30, 64, 175, 0.07);
+}
+[data-theme="crimson"] {
+  --bg: #100708; --card: rgba(34, 15, 18, 0.64); --card-hover: rgba(50, 21, 26, 0.84);
+  --border: rgba(248, 113, 113, 0.14); --border-strong: rgba(248, 113, 113, 0.34);
+  --fg: #fff1f2; --muted: #99777c; --muted-2: #c29a9f;
+  --accent: #ef4444; --accent-2: #f87171; --accent-3: #fca5a5; --accent-dark: #b91c1c;
+  --accent-rgb: 239, 68, 68; --accent-2-rgb: 248, 113, 113;
+  --glow-1: rgba(220, 38, 38, 0.18); --glow-2: rgba(248, 113, 113, 0.10); --glow-3: rgba(127, 29, 29, 0.08);
+}
 
 :root { --gold: #fbbf24; --warning: #f59e0b; --danger: #ef4444; }
 
@@ -74,10 +115,14 @@ body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   background-color: var(--bg);
   color: var(--fg);
-  background-image: 
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.34)),
+    var(--custom-background, none),
     radial-gradient(ellipse 100% 60% at 50% -10%, var(--glow-1), transparent 70%),
     radial-gradient(ellipse 50% 40% at 90% 90%, var(--glow-2), transparent 70%),
     radial-gradient(ellipse 50% 40% at 10% 70%, var(--glow-3), transparent 70%);
+  background-size: cover, cover, auto, auto, auto;
+  background-position: center, center, center, center, center;
   background-attachment: fixed;
   min-height: 100vh;
   transition: background-color 0.4s ease, color 0.4s ease;
@@ -245,8 +290,8 @@ body::before {
 ::-webkit-scrollbar-thumb { background: rgba(var(--accent-2-rgb), 0.2); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(var(--accent-2-rgb), 0.4); }
 
-/* Esconde o relatório PDF da tela */
-#pdf-report { display: none; }
+/* Mantém o relatório renderizado para o html2canvas, mas fora da tela */
+#pdf-report { display: none; width: 794px; background: #fff; }
 
 @media (max-width: 640px) {
   .gasto-item { flex-wrap: wrap; }
@@ -298,13 +343,18 @@ body::before {
         </button>
         <div id="theme-dropdown" class="hidden absolute right-0 mt-2 w-56 glass rounded-xl p-4 z-50 shadow-2xl">
           <p class="text-xs text-[var(--muted)] mb-2 px-1 font-semibold uppercase tracking-wider">Temas</p>
-          <div class="grid grid-cols-6 gap-2 justify-items-center mb-4">
+          <div class="grid grid-cols-5 gap-2 justify-items-center mb-4">
             <div class="theme-dot active" data-theme="emerald" style="background: #10b981;" title="Esmeralda"></div>
             <div class="theme-dot" data-theme="ocean" style="background: #0ea5e9;" title="Oceano"></div>
             <div class="theme-dot" data-theme="purple" style="background: #a855f7;" title="Ametista"></div>
             <div class="theme-dot" data-theme="rose" style="background: #f43f5e;" title="Rosé"></div>
             <div class="theme-dot" data-theme="sunset" style="background: #f97316;" title="Sunset"></div>
             <div class="theme-dot" data-theme="cyber" style="background: #06b6d4;" title="Cyber"></div>
+            <div class="theme-dot" data-theme="graphite" style="background: #94a3b8;" title="Grafite"></div>
+            <div class="theme-dot" data-theme="obsidian" style="background: #f5f5f5;" title="Obsidiana"></div>
+            <div class="theme-dot" data-theme="black" style="background: #000000;" title="Black"></div>
+            <div class="theme-dot" data-theme="midnight" style="background: #818cf8;" title="Meia-noite"></div>
+            <div class="theme-dot" data-theme="crimson" style="background: #ef4444;" title="Crimson"></div>
           </div>
           <div class="border-t border-[var(--border)] pt-3">
             <p class="text-xs text-[var(--muted)] mb-2 px-1 font-semibold uppercase tracking-wider">Cor Personalizada</p>
@@ -312,6 +362,30 @@ body::before {
               <input type="color" id="custom-color-picker" value="#10b981" class="w-10 h-10 rounded cursor-pointer bg-transparent border-none">
               <span class="text-xs text-[var(--muted-2)]">Escolha sua cor</span>
             </div>
+          </div>
+          <div class="border-t border-[var(--border)] pt-3 mt-3">
+            <p class="text-xs text-[var(--muted)] mb-2 px-1 font-semibold uppercase tracking-wider">Plano de fundo</p>
+            <div class="flex items-center gap-2">
+              <label for="background-picker" class="btn-ghost h-10 px-3 text-xs font-semibold cursor-pointer">Escolher imagem</label>
+              <input type="file" id="background-picker" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden">
+              <button type="button" id="clear-background-btn" class="btn-ghost h-10 px-3 text-xs font-semibold">Remover</button>
+            </div>
+            <p id="background-status" class="text-[10px] text-[var(--muted)] mt-2 px-1">Nenhuma imagem selecionada</p>
+          </div>
+          <div class="border-t border-[var(--border)] pt-3 mt-3">
+            <label for="language-select" class="text-xs text-[var(--muted)] mb-2 px-1 font-semibold uppercase tracking-wider block">Idioma</label>
+            <select id="language-select" class="input-field text-xs py-2">
+              <option value="pt-BR">Português (Brasil)</option>
+              <option value="en">English</option>
+              <option value="es">Español</option>
+              <option value="fr">Français</option>
+              <option value="it">Italiano</option>
+              <option value="de">Deutsch</option>
+              <option value="zh">中文</option>
+              <option value="ja">日本語</option>
+              <option value="ko">한국어</option>
+              <option value="hi">हिन्दी</option>
+            </select>
           </div>
         </div>
       </div>
@@ -543,6 +617,9 @@ const STORAGE_KEY = 'bolsa-financas-v2';
 const THEME_KEY = 'bolsa-tema';
 const CUSTOM_COLOR_KEY = 'bolsa-cor-custom';
 const VISITS_KEY = 'bolsa-visitas';
+const PRESENCE_KEY = 'bolsa-presenca-v1';
+const BACKGROUND_KEY = 'bolsa-plano-fundo-v1';
+const LANGUAGE_KEY = 'bolsa-idioma-v1';
 
 const State = { rendas: [], gastos: [], filter: 'all', formTipo: 'fixo' };
 
@@ -733,48 +810,75 @@ function removeGasto(id) {
 // ===== PDF Export =====
 function exportToPDF() {
   showToast('Gerando relatório PDF...', 'success');
-  
-  // Preenche dados no template oculto
-  const dataStr = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-  document.getElementById('pdf-date').textContent = `Data: ${dataStr}`;
-  document.getElementById('pdf-renda').textContent = formatCurrency(getTotalRenda());
-  document.getElementById('pdf-comprometido').textContent = formatCurrency(getTotalComprometido());
-  document.getElementById('pdf-disponivel').textContent = formatCurrency(getTotalRenda() - getTotalComprometido());
-  
-  const rendasBody = document.getElementById('pdf-rendas-body');
-  rendasBody.innerHTML = State.rendas.map(r => `
-    <tr>
-      <td style="padding: 8px 10px; border-bottom: 1px solid #eee;">${escapeHtml(r.descricao)}</td>
-      <td style="padding: 8px 10px; border-bottom: 1px solid #eee; text-align: right; font-weight: 600;">${formatCurrency(r.valor)}</td>
-    </tr>
-  `).join('') || `<tr><td colspan="2" style="padding: 10px; text-align: center; color: #999;">Nenhuma renda cadastrada</td></tr>`;
-  
-  const gastosBody = document.getElementById('pdf-gastos-body');
-  const tr = getTotalRenda();
-  gastosBody.innerHTML = State.gastos.map(g => {
-    const p = tr > 0 ? (g.valor / tr) * 100 : 0;
-    const tipo = g.tipo === 'parcelado' ? `Parcelado (${g.parcelas}x)` : 'Fixo';
-    return `
-      <tr>
-        <td style="padding: 8px 10px; border-bottom: 1px solid #eee;">${escapeHtml(g.descricao)}</td>
-        <td style="padding: 8px 10px; border-bottom: 1px solid #eee; text-align: center; font-size: 12px;">${tipo}</td>
-        <td style="padding: 8px 10px; border-bottom: 1px solid #eee; text-align: right; font-weight: 600;">${formatCurrency(g.valor)}</td>
-        <td style="padding: 8px 10px; border-bottom: 1px solid #eee; text-align: right; color: ${p >= 70 ? '#ef4444' : '#666'};">${p.toFixed(1)}%</td>
-      </tr>
-    `;
-  }).join('') || `<tr><td colspan="4" style="padding: 10px; text-align: center; color: #999;">Nenhum gasto cadastrado</td></tr>`;
+  const PDF = window.jspdf && window.jspdf.jsPDF;
+  if (!PDF) { showToast('Biblioteca de PDF indisponível', 'danger'); return; }
 
-  // Configura e gera o PDF
-  const element = document.getElementById('pdf-report');
-  const opt = {
-    margin: 10,
-    filename: `Relatorio_Financeiro_${new Date().toISOString().split('T')[0]}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, backgroundColor: '#ffffff' },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-  
-  html2pdf().set(opt).from(element).save();
+  try {
+    const doc = new PDF({ unit: 'mm', format: 'a4' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 14;
+    const clean = value => String(value).replace(/\u00a0/g, ' ');
+    const money = value => clean(formatCurrency(value));
+    let y = 18;
+
+    const ensureSpace = height => {
+      if (y + height > 280) { doc.addPage(); y = 18; }
+    };
+    const sectionTitle = title => {
+      ensureSpace(12);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(26, 26, 26);
+      doc.text(title, margin, y); y += 7;
+    };
+    const row = (columns, widths, height = 7) => {
+      ensureSpace(height + 2);
+      let x = margin;
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(60, 60, 60);
+      columns.forEach((value, index) => {
+        const lines = doc.splitTextToSize(clean(value), widths[index] - 2);
+        doc.text(lines[0], x, y);
+        x += widths[index];
+      });
+      doc.setDrawColor(225, 225, 225); doc.line(margin, y + 2, pageWidth - margin, y + 2); y += height;
+    };
+
+    doc.setTextColor(16, 185, 129); doc.setFont('helvetica', 'bold'); doc.setFontSize(22);
+    doc.text('Relatorio Financeiro', margin, y); y += 7;
+    doc.setTextColor(105, 105, 105); doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+    doc.text(`MeioDormindo - ${new Date().toLocaleDateString('pt-BR')}`, margin, y); y += 12;
+    doc.setDrawColor(16, 185, 129); doc.setLineWidth(1); doc.line(margin, y, pageWidth - margin, y); y += 10;
+
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(26, 26, 26);
+    const summaryWidth = (pageWidth - margin * 2 - 8) / 3;
+    [['Renda total', getTotalRenda()], ['Comprometido', getTotalComprometido()], ['Disponivel', getTotalRenda() - getTotalComprometido()]].forEach((item, index) => {
+      const x = margin + index * (summaryWidth + 4);
+      doc.setFillColor(248, 249, 250); doc.roundedRect(x, y, summaryWidth, 18, 2, 2, 'F');
+      doc.setTextColor(105, 105, 105); doc.setFontSize(8); doc.text(item[0], x + 4, y + 6);
+      doc.setTextColor(26, 26, 26); doc.setFontSize(11); doc.text(money(item[1]), x + 4, y + 13);
+    });
+    y += 29;
+
+    sectionTitle('Fontes de Renda');
+    row(['Descricao', 'Valor'], [pageWidth - margin * 2 - 45, 45], 8);
+    if (State.rendas.length) State.rendas.forEach(renda => row([renda.descricao, money(renda.valor)], [pageWidth - margin * 2 - 45, 45]));
+    else row(['Nenhuma renda cadastrada', ''], [pageWidth - margin * 2 - 45, 45]);
+
+    y += 5; sectionTitle('Lista de Gastos');
+    const widths = [72, 38, 45, pageWidth - margin * 2 - 155];
+    row(['Descricao', 'Tipo', 'Valor/Mes', '% da Renda'], widths, 8);
+    const totalRenda = getTotalRenda();
+    if (State.gastos.length) State.gastos.forEach(gasto => {
+      const percent = totalRenda > 0 ? gasto.valor / totalRenda * 100 : 0;
+      const tipo = gasto.tipo === 'parcelado' ? `Parcelado (${gasto.parcelas}x)` : 'Fixo';
+      row([gasto.descricao, tipo, money(gasto.valor), `${percent.toFixed(1)}%`], widths);
+    });
+    else row(['Nenhum gasto cadastrado', '', '', ''], widths);
+
+    doc.save(`Relatorio_Financeiro_${new Date().toISOString().split('T')[0]}.pdf`);
+    showToast('Relatorio PDF gerado com sucesso', 'success');
+  } catch (error) {
+    console.error('Falha ao gerar PDF:', error);
+    showToast('Nao foi possivel gerar o PDF', 'danger');
+  }
 }
 
 // ===== Temas (Presets e Customizado) =====
@@ -821,6 +925,77 @@ function applyPresetTheme(themeName) {
   renderAll();
 }
 
+function applyBackground(dataUrl) {
+  const root = document.documentElement;
+  const status = document.getElementById('background-status');
+  if (dataUrl) {
+    root.style.setProperty('--custom-background', `url(${dataUrl})`);
+    localStorage.setItem(BACKGROUND_KEY, dataUrl);
+    if (status) status.textContent = 'Imagem selecionada';
+  } else {
+    root.style.removeProperty('--custom-background');
+    localStorage.removeItem(BACKGROUND_KEY);
+    if (status) status.textContent = 'Nenhuma imagem selecionada';
+  }
+}
+
+function initBackground() {
+  applyBackground(localStorage.getItem(BACKGROUND_KEY));
+  const picker = document.getElementById('background-picker');
+  const clearButton = document.getElementById('clear-background-btn');
+  picker.addEventListener('change', event => {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { showToast('Escolha um arquivo de imagem', 'warning'); return; }
+    if (file.size > 5 * 1024 * 1024) { showToast('A imagem deve ter no maximo 5 MB', 'warning'); return; }
+    const reader = new FileReader();
+    reader.onload = () => { applyBackground(reader.result); showToast('Plano de fundo aplicado', 'success'); };
+    reader.onerror = () => showToast('Nao foi possivel carregar a imagem', 'danger');
+    reader.readAsDataURL(file);
+  });
+  clearButton.addEventListener('click', () => {
+    picker.value = '';
+    applyBackground(null);
+    showToast('Plano de fundo removido', 'success');
+  });
+}
+
+const LANGUAGE_TEXTS = {
+  'pt-BR': ['controle financeiro pessoal', 'online', 'visitas totais', 'Temas', 'Cor Personalizada', 'Plano de fundo', 'Idioma', 'Escolha sua cor', 'Nenhuma imagem selecionada', 'Escolher imagem', 'Remover', 'Renda líquida total', 'Fonte de renda', 'Valor (R$)', 'Adicionar gasto', 'Descrição', 'Valor da parcela (R$)', 'Tipo', 'Fixo', 'Parcelado', 'Incluir no histórico de acompanhamento', 'Seus gastos', 'Todos', 'Fixos', 'Parcelados', 'No histórico', 'Nenhum gasto ainda', 'Adicione seu primeiro gasto usando o formulário acima.', 'Seus dados ficam apenas neste navegador. Nada é enviado para a internet.'],
+  en: ['personal finance control', 'online', 'total visits', 'Themes', 'Custom Color', 'Background', 'Language', 'Choose your color', 'No image selected', 'Choose image', 'Remove', 'Total net income', 'Income source', 'Amount (BRL)', 'Add expense', 'Description', 'Installment amount (BRL)', 'Type', 'Fixed', 'Installments', 'Include in tracking history', 'Your expenses', 'All', 'Fixed', 'Installments', 'In history', 'No expenses yet', 'Add your first expense using the form above.', 'Your data stays only in this browser. Nothing is sent to the internet.'],
+  es: ['control financiero personal', 'en linea', 'visitas totales', 'Temas', 'Color personalizado', 'Fondo', 'Idioma', 'Elige tu color', 'Ninguna imagen seleccionada', 'Elegir imagen', 'Eliminar', 'Ingresos netos totales', 'Fuente de ingresos', 'Valor (BRL)', 'Agregar gasto', 'Descripcion', 'Valor de la cuota (BRL)', 'Tipo', 'Fijo', 'A plazos', 'Incluir en el historial', 'Tus gastos', 'Todos', 'Fijos', 'A plazos', 'En el historial', 'Aun no hay gastos', 'Agrega tu primer gasto usando el formulario.', 'Tus datos permanecen solo en este navegador. Nada se envia a internet.'],
+  fr: ['controle financier personnel', 'en ligne', 'visites totales', 'Themes', 'Couleur personnalisee', 'Arriere-plan', 'Langue', 'Choisir votre couleur', 'Aucune image selectionnee', 'Choisir une image', 'Supprimer', 'Revenu net total', 'Source de revenus', 'Montant (BRL)', 'Ajouter une depense', 'Description', 'Montant de la mensualite (BRL)', 'Type', 'Fixe', 'Echelonne', 'Inclure dans l’historique', 'Vos depenses', 'Toutes', 'Fixes', 'Echelonnees', 'Dans l’historique', 'Aucune depense', 'Ajoutez votre premiere depense avec le formulaire.', 'Vos donnees restent dans ce navigateur. Rien n’est envoye sur internet.'],
+  it: ['controllo finanziario personale', 'online', 'visite totali', 'Temi', 'Colore personalizzato', 'Sfondo', 'Lingua', 'Scegli il colore', 'Nessuna immagine selezionata', 'Scegli immagine', 'Rimuovi', 'Reddito netto totale', 'Fonte di reddito', 'Importo (BRL)', 'Aggiungi spesa', 'Descrizione', 'Importo rata (BRL)', 'Tipo', 'Fisso', 'Rateizzato', 'Includi nella cronologia', 'Le tue spese', 'Tutte', 'Fisse', 'Rateizzate', 'Nella cronologia', 'Nessuna spesa', 'Aggiungi la prima spesa usando il modulo.', 'I tuoi dati restano solo in questo browser. Nulla viene inviato su internet.'],
+  de: ['personliche Finanzkontrolle', 'online', 'Besuche insgesamt', 'Themen', 'Benutzerdefinierte Farbe', 'Hintergrund', 'Sprache', 'Farbe auswahlen', 'Kein Bild ausgewahlt', 'Bild auswahlen', 'Entfernen', 'Gesamtes Nettoeinkommen', 'Einkommensquelle', 'Betrag (BRL)', 'Ausgabe hinzufugen', 'Beschreibung', 'Ratenbetrag (BRL)', 'Typ', 'Fest', 'Ratenzahlung', 'In Verlauf aufnehmen', 'Deine Ausgaben', 'Alle', 'Feste', 'Ratenzahlungen', 'Im Verlauf', 'Noch keine Ausgaben', 'Fuge deine erste Ausgabe uber das Formular hinzu.', 'Deine Daten bleiben in diesem Browser. Nichts wird ins Internet gesendet.'],
+  zh: ['个人财务控制', '在线', '总访问次数', '主题', '自定义颜色', '背景', '语言', '选择颜色', '未选择图片', '选择图片', '移除', '净收入总额', '收入来源', '金额（BRL）', '添加支出', '描述', '分期金额（BRL）', '类型', '固定', '分期', '加入历史记录', '你的支出', '全部', '固定支出', '分期支出', '历史记录', '暂无支出', '使用上方表单添加第一笔支出。', '你的数据仅保存在此浏览器中，不会发送到互联网。'],
+  ja: ['個人財務管理', 'オンライン', '総訪問数', 'テーマ', 'カスタムカラー', '背景', '言語', '色を選択', '画像が選択されていません', '画像を選択', '削除', '純収入合計', '収入源', '金額（BRL）', '支出を追加', '説明', '分割金額（BRL）', '種類', '固定', '分割払い', '履歴に含める', '支出一覧', 'すべて', '固定費', '分割払い', '履歴あり', '支出はまだありません', '上のフォームから最初の支出を追加してください。', 'データはこのブラウザーにのみ保存され、インターネットには送信されません。'],
+  ko: ['개인 재무 관리', '온라인', '총 방문 수', '테마', '사용자 지정 색상', '배경', '언어', '색상 선택', '선택된 이미지 없음', '이미지 선택', '삭제', '총 순수입', '수입원', '금액 (BRL)', '지출 추가', '설명', '할부 금액 (BRL)', '유형', '고정', '할부', '기록에 포함', '지출 내역', '전체', '고정 지출', '할부 지출', '기록에 있음', '아직 지출이 없습니다', '위 양식으로 첫 지출을 추가하세요.', '데이터는 이 브라우저에만 저장되며 인터넷으로 전송되지 않습니다.'],
+  hi: ['व्यक्तिगत वित्त नियंत्रण', 'ऑनलाइन', 'कुल विज़िट', 'थीम', 'कस्टम रंग', 'पृष्ठभूमि', 'भाषा', 'अपना रंग चुनें', 'कोई छवि चयनित नहीं', 'छवि चुनें', 'हटाएं', 'कुल शुद्ध आय', 'आय का स्रोत', 'राशि (BRL)', 'खर्च जोड़ें', 'विवरण', 'किश्त राशि (BRL)', 'प्रकार', 'निश्चित', 'किश्तों वाला', 'इतिहास में शामिल करें', 'आपके खर्च', 'सभी', 'निश्चित खर्च', 'किश्तों वाले', 'इतिहास में', 'अभी कोई खर्च नहीं', 'ऊपर दिए फॉर्म से अपना पहला खर्च जोड़ें।', 'आपका डेटा केवल इसी ब्राउज़र में रहता है। इंटरनेट पर कुछ नहीं भेजा जाता।']
+};
+
+function initLanguage() {
+  const select = document.getElementById('language-select');
+  const applyLanguage = language => {
+    const translated = LANGUAGE_TEXTS[language] || LANGUAGE_TEXTS['pt-BR'];
+    const translations = new Map();
+    Object.values(LANGUAGE_TEXTS).forEach(texts => texts.forEach((text, index) => translations.set(text, index)));
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(node => {
+      if (node.parentElement.closest('#language-select')) return;
+      const key = node.nodeValue.trim();
+      if (translations.has(key)) node.nodeValue = node.nodeValue.replace(key, translated[translations.get(key)]);
+    });
+    document.documentElement.lang = language;
+    localStorage.setItem(LANGUAGE_KEY, language);
+  };
+  const savedLanguage = localStorage.getItem(LANGUAGE_KEY) || 'pt-BR';
+  select.value = savedLanguage;
+  applyLanguage(savedLanguage);
+  select.addEventListener('change', event => { applyLanguage(event.target.value); showToast('Idioma atualizado', 'success'); });
+}
+
 function initTheme() {
   const savedTheme = localStorage.getItem(THEME_KEY) || 'emerald';
   if (savedTheme === 'custom') {
@@ -855,8 +1030,7 @@ function initTheme() {
 // ===== Contadores =====
 function initCounters() {
   let visits = parseInt(localStorage.getItem(VISITS_KEY) || '0', 10);
-  if (visits === 0) visits = Math.floor(Math.random() * 700) + 150;
-  else visits += 1;
+  visits += 1;
   localStorage.setItem(VISITS_KEY, visits.toString());
   
   const updateVisits = () => {
@@ -865,13 +1039,45 @@ function initCounters() {
   };
   updateVisits();
   
-  let online = Math.floor(Math.random() * 25) + 12;
-  const updateOnline = () => {
-    document.getElementById('online-count').textContent = online;
-    document.getElementById('online-count-mobile').textContent = online;
+  const sessionId = uid();
+  const presenceChannel = 'BroadcastChannel' in window ? new BroadcastChannel(PRESENCE_KEY) : null;
+  const presenceTimeout = 15000;
+  const presenceNow = () => Date.now();
+  const readPresence = () => {
+    try { return JSON.parse(localStorage.getItem(PRESENCE_KEY) || '{}'); }
+    catch (error) { return {}; }
   };
+  const writePresence = () => {
+    const active = readPresence();
+    active[sessionId] = presenceNow();
+    localStorage.setItem(PRESENCE_KEY, JSON.stringify(active));
+    if (presenceChannel) presenceChannel.postMessage({ type: 'heartbeat', sessionId });
+  };
+  const updateOnline = () => {
+    const now = presenceNow();
+    const active = Object.values(readPresence()).filter(timestamp => now - timestamp < presenceTimeout).length;
+    document.getElementById('online-count').textContent = active;
+    document.getElementById('online-count-mobile').textContent = active;
+  };
+  const refreshPresence = () => {
+    const now = presenceNow();
+    const active = Object.fromEntries(Object.entries(readPresence()).filter(([, timestamp]) => now - timestamp < presenceTimeout));
+    localStorage.setItem(PRESENCE_KEY, JSON.stringify(active));
+    writePresence();
+    updateOnline();
+  };
+  writePresence();
   updateOnline();
-  setInterval(() => { online = Math.max(5, Math.min(60, online + (Math.floor(Math.random() * 7) - 3))); updateOnline(); }, 5000);
+  const presenceTimer = setInterval(refreshPresence, 5000);
+  window.addEventListener('storage', event => { if (event.key === PRESENCE_KEY) updateOnline(); });
+  if (presenceChannel) presenceChannel.addEventListener('message', updateOnline);
+  window.addEventListener('beforeunload', () => {
+    clearInterval(presenceTimer);
+    const active = readPresence();
+    delete active[sessionId];
+    localStorage.setItem(PRESENCE_KEY, JSON.stringify(active));
+    if (presenceChannel) presenceChannel.close();
+  });
 }
 
 // ===== Eventos =====
@@ -941,8 +1147,10 @@ function bindEvents() {
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
   initTheme();
+  initBackground();
   bindEvents();
   renderAll();
+  initLanguage();
   initCounters();
 });
 </script>
