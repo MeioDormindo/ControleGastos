@@ -918,8 +918,10 @@ function applyCustomTheme(hexColor) {
 
 function applyPresetTheme(themeName) {
   // Remove estilos inline para voltar pro CSS
+  const savedBackground = localStorage.getItem(BACKGROUND_KEY);
   document.documentElement.style.cssText = '';
   document.documentElement.setAttribute('data-theme', themeName);
+  if (savedBackground) document.documentElement.style.setProperty('--custom-background', `url(${savedBackground})`);
   localStorage.setItem(THEME_KEY, themeName);
   document.querySelectorAll('.theme-dot').forEach(d => d.classList.toggle('active', d.dataset.theme === themeName));
   renderAll();
