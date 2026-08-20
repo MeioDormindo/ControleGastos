@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="MeioDormindo - Controle financeiro pessoal. Gerencie suas rendas, gastos fixos e parcelados de forma simples e visual.">
+<meta name="description" content="MeioDormindo - Controle financeiro pessoal feito 100% por IA. Uso livre e código aberto.">
 <meta property="og:title" content="MeioDormindo — Controle Financeiro">
 <meta property="og:description" content="Gerencie suas rendas e gastos de forma simples, visual e direta ao ponto.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
@@ -90,6 +90,14 @@
   --accent-rgb: 255, 255, 255; --accent-2-rgb: 229, 229, 229;
   --glow-1: rgba(255, 255, 255, 0.09); --glow-2: rgba(255, 255, 255, 0.05); --glow-3: rgba(255, 255, 255, 0.02);
 }
+[data-theme="light"] {
+  --bg: #f5f7fa; --card: rgba(255, 255, 255, 0.82); --card-hover: rgba(255, 255, 255, 0.98);
+  --border: rgba(15, 23, 42, 0.12); --border-strong: rgba(15, 23, 42, 0.24);
+  --fg: #172033; --muted: #64748b; --muted-2: #475569;
+  --accent: #0f766e; --accent-2: #0d9488; --accent-3: #115e59; --accent-dark: #115e59;
+  --accent-rgb: 15, 118, 110; --accent-2-rgb: 13, 148, 136;
+  --glow-1: rgba(20, 184, 166, 0.16); --glow-2: rgba(14, 165, 233, 0.08); --glow-3: rgba(245, 158, 11, 0.05);
+}
 [data-theme="midnight"] {
   --bg: #070a12; --card: rgba(16, 22, 38, 0.64); --card-hover: rgba(27, 35, 56, 0.84);
   --border: rgba(129, 140, 248, 0.14); --border-strong: rgba(129, 140, 248, 0.34);
@@ -166,6 +174,10 @@ body::before {
   background: rgba(10, 15, 13, 0.8);
 }
 .input-field::placeholder { color: var(--muted); }
+[data-theme="light"] .input-field,
+[data-theme="light"] .seg-control,
+[data-theme="light"] .pill,
+[data-theme="light"] .btn-ghost { background: rgba(255, 255, 255, 0.8); }
 
 .btn-primary {
   background: linear-gradient(135deg, var(--accent), var(--accent-dark));
@@ -351,6 +363,7 @@ body::before {
             <div class="theme-dot" data-theme="black" style="background: #000000;" title="Black"></div>
             <div class="theme-dot" data-theme="midnight" style="background: #818cf8;" title="Meia-noite"></div>
             <div class="theme-dot" data-theme="crimson" style="background: #ef4444;" title="Crimson"></div>
+            <div class="theme-dot" data-theme="light" style="background: #f5f7fa; border-color: #64748b;" title="Claro"></div>
           </div>
           <div class="border-t border-[var(--border)] pt-3">
             <p class="text-xs text-[var(--muted)] mb-2 px-1 font-semibold uppercase tracking-wider">Cor Personalizada</p>
@@ -484,6 +497,19 @@ body::before {
           <button type="button" class="seg-option" data-tipo="parcelado">Parcelado</button>
         </div>
       </div>
+      <div class="md:col-span-4">
+        <label for="gasto-categoria" class="text-xs font-semibold text-[var(--muted-2)] mb-1.5 block">Categoria</label>
+        <select id="gasto-categoria" class="input-field">
+          <option value="moradia">Moradia</option>
+          <option value="alimentacao">Alimentação</option>
+          <option value="transporte">Transporte</option>
+          <option value="saude">Saúde</option>
+          <option value="lazer">Lazer</option>
+          <option value="educacao">Educação</option>
+          <option value="assinaturas">Assinaturas</option>
+          <option value="outros" selected>Outros</option>
+        </select>
+      </div>
       <div class="md:col-span-3 hidden" id="parcelas-wrapper">
         <label for="gasto-parcelas" class="text-xs font-semibold text-[var(--muted-2)] mb-1.5 block">Nº de parcelas</label>
         <input type="number" id="gasto-parcelas" class="input-field" min="2" max="48" value="2">
@@ -524,6 +550,17 @@ body::before {
         <button type="button" class="pill" data-filter="historico">No histórico</button>
       </div>
     </div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+      <select id="category-filter" class="input-field text-sm py-2">
+        <option value="all">Todas as categorias</option>
+      </select>
+      <select id="month-filter" class="input-field text-sm py-2">
+        <option value="all">Todos os meses</option>
+      </select>
+      <select id="year-filter" class="input-field text-sm py-2">
+        <option value="all">Todos os anos</option>
+      </select>
+    </div>
     <div id="gastos-list" class="space-y-3"></div>
     <div id="empty-state" class="empty-state hidden">
       <div class="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style="background: rgba(var(--accent-rgb), 0.05); border: 1px solid var(--border);">
@@ -533,9 +570,38 @@ body::before {
       <p class="text-sm" id="empty-desc">Adicione seu primeiro gasto usando o formulário acima.</p>
     </div>
   </section>
+
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-8">
+    <div class="glass rounded-3xl p-6 lg:col-span-2">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="font-display text-lg font-bold">Histórico mensal</h2>
+          <p class="text-xs text-[var(--muted)]">Gastos registrados nos últimos meses</p>
+        </div>
+        <span class="badge badge-parcelado">6 meses</span>
+      </div>
+      <div class="h-52"><canvas id="history-chart" class="w-full h-full"></canvas></div>
+    </div>
+    <div class="glass rounded-3xl p-6">
+      <h2 class="font-display text-lg font-bold mb-1">Meta de economia</h2>
+      <p class="text-xs text-[var(--muted)] mb-5">Acompanhe quanto deseja guardar</p>
+      <label for="goal-value" class="text-xs font-semibold text-[var(--muted-2)] mb-1.5 block">Meta mensal (R$)</label>
+      <div class="flex gap-2">
+        <input type="text" id="goal-value" class="input-field" inputmode="numeric" placeholder="0,00">
+        <button type="button" id="save-goal-btn" class="btn-icon" title="Salvar meta" aria-label="Salvar meta">✓</button>
+      </div>
+      <div class="flex items-center justify-between mt-5 text-xs">
+        <span class="text-[var(--muted)]">Disponível para guardar</span>
+        <strong id="goal-current">R$ 0,00</strong>
+      </div>
+      <div class="dist-bar mt-2"><div class="dist-bar-fill" id="goal-fill" style="width: 0%"></div></div>
+      <p class="text-xs text-[var(--muted)] mt-2" id="goal-status">Defina uma meta para começar.</p>
+    </div>
+  </section>
   
   <footer class="mt-16 mb-4 text-center">
     <p class="text-xs text-[var(--muted)]">Seus dados ficam apenas neste navegador. Nada é enviado para a internet.</p>
+    <p class="text-xs text-[var(--muted)] mt-2">Feito 100% por IA · Uso livre · Código aberto</p>
   </footer>
 </div>
 
@@ -607,7 +673,7 @@ const VISITS_KEY = 'bolsa-visitas';
 const PRESENCE_KEY = 'bolsa-presenca-v1';
 const LANGUAGE_KEY = 'bolsa-idioma-v1';
 
-const State = { rendas: [], gastos: [], filter: 'all', formTipo: 'fixo' };
+const State = { rendas: [], gastos: [], filter: 'all', categoryFilter: 'all', monthFilter: 'all', yearFilter: 'all', formTipo: 'fixo', goal: 0 };
 
 // ===== Persistência =====
 function loadState() {
@@ -617,6 +683,7 @@ function loadState() {
       const data = JSON.parse(raw);
       State.rendas = Array.isArray(data.rendas) ? data.rendas : [];
       State.gastos = Array.isArray(data.gastos) ? data.gastos : [];
+      State.goal = Number(data.goal) > 0 ? Number(data.goal) : 0;
     } else {
       const oldRaw = localStorage.getItem('bolsa-financas-v1');
       if (oldRaw) {
@@ -627,11 +694,12 @@ function loadState() {
     }
   } catch(e) { console.warn('Falha ao carregar:', e); }
 }
-function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify({ rendas: State.rendas, gastos: State.gastos })); }
+function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify({ rendas: State.rendas, gastos: State.gastos, goal: State.goal })); }
 
 // ===== Utils =====
 function formatCurrency(n) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n); }
 function parseCurrencyInput(str) { const d = str.replace(/\D/g, ''); return d ? parseInt(d, 10) / 100 : 0; }
+function hasNegativeCurrencyInput(str) { return /-/.test(String(str)); }
 function formatCurrencyInput(str) { const v = parseCurrencyInput(str); return v === 0 ? '' : v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -668,6 +736,18 @@ function getHealthStatus(percent) {
   if (percent < 70) return 'Atenção';
   if (percent < 90) return 'Apertado';
   return 'Crítico';
+}
+
+const CATEGORIES = {
+  moradia: 'Moradia', alimentacao: 'Alimentação', transporte: 'Transporte', saude: 'Saúde',
+  lazer: 'Lazer', educacao: 'Educação', assinaturas: 'Assinaturas', outros: 'Outros'
+};
+function getCategoryLabel(category) { return CATEGORIES[category] || CATEGORIES.outros; }
+function getExpenseDate(gasto) { return new Date(gasto.createdAt || Date.now()); }
+function matchesDateFilters(gasto) {
+  const date = getExpenseDate(gasto);
+  return (State.monthFilter === 'all' || date.getMonth() === Number(State.monthFilter)) &&
+    (State.yearFilter === 'all' || date.getFullYear() === Number(State.yearFilter));
 }
 
 // ===== Renderização =====
@@ -710,6 +790,18 @@ function renderStats() {
   document.getElementById('stat-parcelas').textContent = State.gastos.filter(g => g.tipo === 'parcelado').length;
 }
 
+function populateExpenseFilters() {
+  const category = document.getElementById('category-filter');
+  const month = document.getElementById('month-filter');
+  const year = document.getElementById('year-filter');
+  const categoryValue = State.categoryFilter, monthValue = State.monthFilter, yearValue = State.yearFilter;
+  category.innerHTML = '<option value="all">Todas as categorias</option>' + Object.entries(CATEGORIES).map(([value, label]) => `<option value="${value}">${label}</option>`).join('');
+  month.innerHTML = '<option value="all">Todos os meses</option>' + Array.from({ length: 12 }, (_, index) => `<option value="${index}">${new Date(2000, index, 1).toLocaleDateString('pt-BR', { month: 'long' })}</option>`).join('');
+  const years = [...new Set(State.gastos.map(gasto => getExpenseDate(gasto).getFullYear()))].sort((a, b) => b - a);
+  year.innerHTML = '<option value="all">Todos os anos</option>' + years.map(value => `<option value="${value}">${value}</option>`).join('');
+  category.value = categoryValue; month.value = monthValue; year.value = yearValue;
+}
+
 function renderGastos() {
   const list = document.getElementById('gastos-list');
   const empty = document.getElementById('empty-state');
@@ -717,6 +809,8 @@ function renderGastos() {
   if (State.filter === 'fixo') filtered = filtered.filter(g => g.tipo === 'fixo');
   else if (State.filter === 'parcelado') filtered = filtered.filter(g => g.tipo === 'parcelado');
   else if (State.filter === 'historico') filtered = filtered.filter(g => g.historico);
+  if (State.categoryFilter !== 'all') filtered = filtered.filter(g => (g.categoria || 'outros') === State.categoryFilter);
+  filtered = filtered.filter(matchesDateFilters);
   document.getElementById('gastos-count-label').textContent = State.gastos.length > 0 ? `· ${filtered.length} de ${State.gastos.length}` : '';
   
   if (filtered.length === 0) {
@@ -742,6 +836,7 @@ function renderGastos() {
           <div class="flex items-center gap-2 flex-wrap">
             <p class="font-semibold text-[var(--fg)] truncate">${escapeHtml(g.descricao)}</p>
             <span class="badge ${isP ? 'badge-parcelado' : 'badge-fixo'}">${isP ? `${g.parcelas}x` : 'Fixo'}</span>
+            <span class="badge badge-muted">${getCategoryLabel(g.categoria)}</span>
             ${!g.historico ? '<span class="badge badge-muted">Sem histórico</span>' : ''}
           </div>
           <div class="flex items-center gap-2 mt-1 text-xs text-[var(--muted)] flex-wrap">
@@ -760,6 +855,41 @@ function renderGastos() {
   list.querySelectorAll('.remove-btn').forEach(btn => btn.addEventListener('click', () => removeGasto(btn.dataset.id)));
 }
 
+function renderHistoryChart() {
+  const canvas = document.getElementById('history-chart');
+  if (!canvas) return;
+  const context = canvas.getContext('2d');
+  const width = canvas.clientWidth || 500, height = canvas.clientHeight || 208, ratio = window.devicePixelRatio || 1;
+  canvas.width = width * ratio; canvas.height = height * ratio; context.setTransform(ratio, 0, 0, ratio, 0, 0);
+  context.clearRect(0, 0, width, height);
+  const now = new Date();
+  const months = Array.from({ length: 6 }, (_, index) => new Date(now.getFullYear(), now.getMonth() - 5 + index, 1));
+  const values = months.map(month => State.gastos.filter(gasto => { const date = getExpenseDate(gasto); return date.getFullYear() === month.getFullYear() && date.getMonth() === month.getMonth(); }).reduce((sum, gasto) => sum + gasto.valor, 0));
+  const max = Math.max(...values, 1), padding = { top: 12, right: 10, bottom: 30, left: 10 }, chartHeight = height - padding.top - padding.bottom;
+  const barWidth = (width - padding.left - padding.right) / months.length * 0.55;
+  context.font = '10px Plus Jakarta Sans, sans-serif'; context.textAlign = 'center';
+  values.forEach((value, index) => {
+    const x = padding.left + (width - padding.left - padding.right) * (index + 0.5) / months.length;
+    const barHeight = value / max * chartHeight;
+    context.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    context.globalAlpha = 0.85; context.fillRect(x - barWidth / 2, padding.top + chartHeight - barHeight, barWidth, barHeight); context.globalAlpha = 1;
+    context.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted').trim();
+    context.fillText(months[index].toLocaleDateString('pt-BR', { month: 'short' }).replace('.', ''), x, height - 10);
+    if (value > 0) { context.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--fg').trim(); context.fillText(formatCurrency(value).replace('R$', '').trim(), x, padding.top + chartHeight - barHeight - 5); }
+  });
+}
+
+function renderGoal() {
+  const available = Math.max(getTotalRenda() - getTotalComprometido(), 0);
+  document.getElementById('goal-current').textContent = formatCurrency(available);
+  const fill = document.getElementById('goal-fill');
+  const percent = State.goal > 0 ? Math.min(available / State.goal * 100, 100) : 0;
+  fill.style.width = `${percent}%`;
+  document.getElementById('goal-status').textContent = State.goal > 0 ? `${percent.toFixed(0)}% da meta alcançada` : 'Defina uma meta para começar.';
+  const goalInput = document.getElementById('goal-value');
+  if (document.activeElement !== goalInput) goalInput.value = State.goal > 0 ? formatCurrencyInput(String(Math.round(State.goal * 100))) : '';
+}
+
 function renderPreview() {
   const v = parseCurrencyInput(document.getElementById('gasto-valor').value);
   const bar = document.getElementById('preview-bar');
@@ -775,11 +905,14 @@ function renderPreview() {
   fill.style.background = c;
 }
 
-function renderAll() { renderRendas(); renderDonut(); renderStats(); renderGastos(); renderPreview(); }
+function renderAll() { renderRendas(); renderDonut(); renderStats(); populateExpenseFilters(); renderGastos(); renderPreview(); renderHistoryChart(); renderGoal(); }
 
 // ===== Ações =====
 function addRenda(d, v) { State.rendas.push({ id: uid(), descricao: d, valor: v }); saveState(); renderAll(); }
-function removeRenda(id) { State.rendas = State.rendas.filter(r => r.id !== id); saveState(); renderAll(); showToast('Renda removida', 'success'); }
+function removeRenda(id) {
+  if (!confirm('Deseja realmente remover esta renda?')) return;
+  State.rendas = State.rendas.filter(r => r.id !== id); saveState(); renderAll(); showToast('Renda removida', 'success');
+}
 function addGasto(data) {
   State.gastos.unshift({ id: uid(), ...data, createdAt: Date.now() });
   saveState(); renderAll();
@@ -789,6 +922,7 @@ function addGasto(data) {
   else showToast(`Gasto adicionado: ${formatCurrency(data.valor)}/mês`, 'success');
 }
 function removeGasto(id) {
+  if (!confirm('Deseja realmente remover este gasto?')) return;
   const item = document.querySelector(`.gasto-item[data-id="${id}"]`);
   if (item) { item.classList.add('removing'); setTimeout(() => { State.gastos = State.gastos.filter(g => g.id !== id); saveState(); renderAll(); showToast('Gasto removido', 'success'); }, 280); }
 }
@@ -942,6 +1076,19 @@ const LANGUAGE_TEXTS = {
   hi: ['व्यक्तिगत वित्त नियंत्रण', 'ऑनलाइन', 'कुल विज़िट', 'थीम', 'कस्टम रंग', 'पृष्ठभूमि', 'भाषा', 'अपना रंग चुनें', 'कोई छवि चयनित नहीं', 'छवि चुनें', 'हटाएं', 'कुल शुद्ध आय', 'आय का स्रोत', 'राशि (BRL)', 'खर्च जोड़ें', 'विवरण', 'किश्त राशि (BRL)', 'प्रकार', 'निश्चित', 'किश्तों वाला', 'इतिहास में शामिल करें', 'आपके खर्च', 'सभी', 'निश्चित खर्च', 'किश्तों वाले', 'इतिहास में', 'अभी कोई खर्च नहीं', 'ऊपर दिए फॉर्म से अपना पहला खर्च जोड़ें।', 'आपका डेटा केवल इसी ब्राउज़र में रहता है। इंटरनेट पर कुछ नहीं भेजा जाता।']
 };
 
+const ABOUT_TRANSLATIONS = {
+  'pt-BR': 'Feito 100% por IA · Uso livre · Código aberto',
+  en: '100% AI-made · Free to use · Open source',
+  es: 'Hecho 100% por IA · Uso libre · Código abierto',
+  fr: 'Créé à 100% par IA · Utilisation libre · Code ouvert',
+  it: 'Realizzato al 100% dall’IA · Uso libero · Codice open source',
+  de: 'Zu 100% von KI erstellt · Frei nutzbar · Open Source',
+  zh: '100% 由人工智能制作 · 可自由使用 · 开源',
+  ja: 'AIによって100%作成 · 自由に利用可能 · オープンソース',
+  ko: 'AI로 100% 제작 · 자유롭게 사용 가능 · 오픈 소스',
+  hi: '100% AI द्वारा निर्मित · मुक्त उपयोग · ओपन सोर्स'
+};
+
 function initLanguage() {
   const select = document.getElementById('language-select');
   const applyLanguage = language => {
@@ -956,6 +1103,10 @@ function initLanguage() {
       const key = node.nodeValue.trim();
       if (translations.has(key)) node.nodeValue = node.nodeValue.replace(key, translated[translations.get(key)]);
     });
+    const aboutText = ABOUT_TRANSLATIONS[language] || ABOUT_TRANSLATIONS['pt-BR'];
+    const footerNote = document.querySelector('footer p:last-child');
+    if (footerNote) footerNote.textContent = aboutText;
+    document.querySelector('meta[name="description"]').setAttribute('content', `MeioDormindo - ${aboutText}`);
     document.documentElement.lang = language;
     localStorage.setItem(LANGUAGE_KEY, language);
   };
@@ -1055,10 +1206,11 @@ function bindEvents() {
   
   const rendaDescInput = document.getElementById('renda-descricao');
   const rendaValorInput = document.getElementById('renda-valor');
-  rendaValorInput.addEventListener('input', (e) => e.target.value = formatCurrencyInput(e.target.value));
+  rendaValorInput.addEventListener('input', (e) => { if (!hasNegativeCurrencyInput(e.target.value)) e.target.value = formatCurrencyInput(e.target.value); });
   
   function handleAddRenda() {
     const d = rendaDescInput.value.trim() || 'Renda extra';
+    if (hasNegativeCurrencyInput(rendaValorInput.value)) { showToast('Valores negativos não são permitidos', 'warning'); return; }
     const v = parseCurrencyInput(rendaValorInput.value);
     if (v <= 0) { showToast('Informe um valor válido para a renda', 'warning'); return; }
     addRenda(d, v);
@@ -1079,18 +1231,20 @@ function bindEvents() {
   });
   
   const valorInput = document.getElementById('gasto-valor');
-  valorInput.addEventListener('input', (e) => { e.target.value = formatCurrencyInput(e.target.value); renderPreview(); });
+  valorInput.addEventListener('input', (e) => { if (!hasNegativeCurrencyInput(e.target.value)) e.target.value = formatCurrencyInput(e.target.value); renderPreview(); });
   
   document.getElementById('gasto-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const d = document.getElementById('gasto-descricao').value.trim();
+    if (hasNegativeCurrencyInput(document.getElementById('gasto-valor').value)) { showToast('Valores negativos não são permitidos', 'warning'); return; }
     const v = parseCurrencyInput(document.getElementById('gasto-valor').value);
     const p = parseInt(document.getElementById('gasto-parcelas').value, 10) || 2;
     const h = document.getElementById('gasto-historico').checked;
+    const categoria = document.getElementById('gasto-categoria').value;
     if (!d) { showToast('Adicione uma descrição', 'warning'); return; }
     if (v <= 0) { showToast('Informe um valor válido', 'warning'); return; }
     if (State.formTipo === 'parcelado' && (p < 2 || p > 48)) { showToast('Parcelas deve ser entre 2 e 48', 'warning'); return; }
-    addGasto({ descricao: d, valor: v, tipo: State.formTipo, parcelas: State.formTipo === 'parcelado' ? p : 1, historico: h });
+    addGasto({ descricao: d, valor: v, tipo: State.formTipo, parcelas: State.formTipo === 'parcelado' ? p : 1, historico: h, categoria });
     document.getElementById('gasto-descricao').value = '';
     document.getElementById('gasto-valor').value = '';
     document.getElementById('gasto-historico').checked = true;
@@ -1105,6 +1259,19 @@ function bindEvents() {
       State.filter = btn.dataset.filter;
       renderGastos();
     });
+  });
+
+  document.getElementById('category-filter').addEventListener('change', event => { State.categoryFilter = event.target.value; renderGastos(); });
+  document.getElementById('month-filter').addEventListener('change', event => { State.monthFilter = event.target.value; renderGastos(); });
+  document.getElementById('year-filter').addEventListener('change', event => { State.yearFilter = event.target.value; renderGastos(); });
+
+  const goalInput = document.getElementById('goal-value');
+  goalInput.addEventListener('input', event => { if (!hasNegativeCurrencyInput(event.target.value)) event.target.value = formatCurrencyInput(event.target.value); });
+  document.getElementById('save-goal-btn').addEventListener('click', () => {
+    if (hasNegativeCurrencyInput(goalInput.value)) { showToast('Valores negativos não são permitidos', 'warning'); return; }
+    const value = parseCurrencyInput(goalInput.value);
+    if (value <= 0) { showToast('Informe uma meta válida', 'warning'); return; }
+    State.goal = value; saveState(); renderGoal(); showToast('Meta de economia salva', 'success');
   });
   
   document.addEventListener('keydown', (e) => {
