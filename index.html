@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="emerald">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,35 +9,57 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #0a0f0d;
-  --card: rgba(20, 30, 26, 0.55);
-  --card-hover: rgba(25, 38, 33, 0.75);
-  --border: rgba(52, 211, 153, 0.12);
-  --border-strong: rgba(52, 211, 153, 0.28);
-  --fg: #e8f5ee;
-  --muted: #7a8a82;
-  --muted-2: #9aaaa1;
-  --accent: #10b981;
-  --accent-2: #34d399;
-  --accent-3: #6ee7b7;
-  --gold: #fbbf24;
-  --warning: #f59e0b;
-  --danger: #ef4444;
+/* ===== Temas ===== */
+:root, [data-theme="emerald"] {
+  --bg: #0a0f0d; --card: rgba(20, 30, 26, 0.55); --card-hover: rgba(25, 38, 33, 0.75);
+  --border: rgba(52, 211, 153, 0.12); --border-strong: rgba(52, 211, 153, 0.28);
+  --fg: #e8f5ee; --muted: #7a8a82; --muted-2: #9aaaa1;
+  --accent: #10b981; --accent-2: #34d399; --accent-3: #6ee7b7; --accent-dark: #059669;
+  --accent-rgb: 16, 185, 129; --accent-2-rgb: 52, 211, 153;
+  --glow-1: rgba(16, 185, 129, 0.18); --glow-2: rgba(20, 184, 166, 0.10); --glow-3: rgba(132, 204, 22, 0.06);
 }
+[data-theme="ocean"] {
+  --bg: #0a0f14; --card: rgba(15, 23, 42, 0.55); --card-hover: rgba(30, 41, 59, 0.75);
+  --border: rgba(56, 189, 248, 0.12); --border-strong: rgba(56, 189, 248, 0.28);
+  --fg: #e0f2fe; --muted: #64748b; --muted-2: #94a3b8;
+  --accent: #0ea5e9; --accent-2: #38bdf8; --accent-3: #7dd3fc; --accent-dark: #0284c7;
+  --accent-rgb: 14, 165, 233; --accent-2-rgb: 56, 189, 248;
+  --glow-1: rgba(14, 165, 233, 0.18); --glow-2: rgba(56, 189, 248, 0.10); --glow-3: rgba(125, 211, 252, 0.06);
+}
+[data-theme="purple"] {
+  --bg: #100a14; --card: rgba(30, 20, 40, 0.55); --card-hover: rgba(40, 30, 50, 0.75);
+  --border: rgba(192, 132, 252, 0.12); --border-strong: rgba(192, 132, 252, 0.28);
+  --fg: #f3e8ff; --muted: #8b7d99; --muted-2: #a89bb8;
+  --accent: #a855f7; --accent-2: #c084fc; --accent-3: #d8b4fe; --accent-dark: #9333ea;
+  --accent-rgb: 168, 85, 247; --accent-2-rgb: 192, 132, 252;
+  --glow-1: rgba(168, 85, 247, 0.18); --glow-2: rgba(192, 132, 252, 0.10); --glow-3: rgba(216, 180, 254, 0.06);
+}
+[data-theme="rose"] {
+  --bg: #140a0f; --card: rgba(40, 20, 30, 0.55); --card-hover: rgba(50, 30, 40, 0.75);
+  --border: rgba(251, 113, 133, 0.12); --border-strong: rgba(251, 113, 133, 0.28);
+  --fg: #ffe4e6; --muted: #997d85; --muted-2: #b89ba3;
+  --accent: #f43f5e; --accent-2: #fb7185; --accent-3: #fda4af; --accent-dark: #e11d48;
+  --accent-rgb: 244, 63, 94; --accent-2-rgb: 251, 113, 133;
+  --glow-1: rgba(244, 63, 94, 0.18); --glow-2: rgba(251, 113, 133, 0.10); --glow-3: rgba(253, 164, 175, 0.06);
+}
+
+--gold: #fbbf24;
+--warning: #f59e0b;
+--danger: #ef4444;
 
 * { -webkit-font-smoothing: antialiased; box-sizing: border-box; }
 
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  background: var(--bg);
+  background-color: var(--bg);
   color: var(--fg);
   background-image: 
-    radial-gradient(ellipse 100% 60% at 50% -10%, rgba(16, 185, 129, 0.18), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 90% 90%, rgba(20, 184, 166, 0.10), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 10% 70%, rgba(132, 204, 22, 0.06), transparent 70%);
+    radial-gradient(ellipse 100% 60% at 50% -10%, var(--glow-1), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 90% 90%, var(--glow-2), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 10% 70%, var(--glow-3), transparent 70%);
   background-attachment: fixed;
   min-height: 100vh;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 .font-display { font-family: 'Space Grotesk', sans-serif; }
@@ -47,8 +69,8 @@ body::before {
   position: fixed;
   inset: 0;
   background-image: 
-    linear-gradient(rgba(52, 211, 153, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(52, 211, 153, 0.04) 1px, transparent 1px);
+    linear-gradient(rgba(var(--accent-2-rgb), 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--accent-2-rgb), 0.04) 1px, transparent 1px);
   background-size: 60px 60px;
   pointer-events: none;
   z-index: 0;
@@ -61,7 +83,7 @@ body::before {
   backdrop-filter: blur(24px) saturate(140%);
   -webkit-backdrop-filter: blur(24px) saturate(140%);
   border: 1px solid var(--border);
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, background-color 0.4s ease;
 }
 .glass:hover { border-color: var(--border-strong); }
 
@@ -74,18 +96,17 @@ body::before {
   width: 100%;
   font-size: 0.95rem;
   transition: all 0.2s ease;
-  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 .input-field:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.1);
   background: rgba(10, 15, 13, 0.8);
 }
 .input-field::placeholder { color: var(--muted); }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent), #059669);
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
   color: #042318;
   font-weight: 700;
   padding: 0.875rem 1.5rem;
@@ -99,25 +120,19 @@ body::before {
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 24px -8px rgba(16, 185, 129, 0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+  box-shadow: 0 8px 24px -8px rgba(var(--accent-rgb), 0.5), inset 0 1px 0 rgba(255,255,255,0.2);
 }
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 28px -8px rgba(16, 185, 129, 0.6), inset 0 1px 0 rgba(255,255,255,0.2);
-}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 28px -8px rgba(var(--accent-rgb), 0.6), inset 0 1px 0 rgba(255,255,255,0.2); }
 .btn-primary:active { transform: translateY(0); }
 .btn-primary::before {
-  content: '';
-  position: absolute;
-  inset: 0;
+  content: ''; position: absolute; inset: 0;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
+  transform: translateX(-100%); transition: transform 0.6s ease;
 }
 .btn-primary:hover::before { transform: translateX(100%); }
 
 .btn-icon {
-  background: linear-gradient(135deg, var(--accent), #059669);
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
   color: #042318;
   font-weight: 700;
   padding: 0.75rem;
@@ -128,9 +143,23 @@ body::before {
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  box-shadow: 0 8px 20px -8px rgba(16, 185, 129, 0.5);
+  box-shadow: 0 8px 20px -8px rgba(var(--accent-rgb), 0.5);
 }
 .btn-icon:hover { transform: translateY(-1px); }
+
+.btn-ghost {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-ghost:hover { border-color: var(--border-strong); }
 
 .seg-control {
   display: flex;
@@ -141,112 +170,69 @@ body::before {
   gap: 4px;
 }
 .seg-option {
-  flex: 1;
-  padding: 0.625rem 1rem;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--muted-2);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: center;
-  user-select: none;
-  border: none;
-  background: transparent;
-  font-family: inherit;
+  flex: 1; padding: 0.625rem 1rem;
+  border-radius: 0.5rem; font-size: 0.875rem;
+  font-weight: 600; color: var(--muted-2);
+  cursor: pointer; transition: all 0.2s ease;
+  text-align: center; user-select: none;
+  border: none; background: transparent; font-family: inherit;
 }
 .seg-option:hover { color: var(--fg); }
 .seg-option.active {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(16, 185, 129, 0.08));
+  background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.22), rgba(var(--accent-rgb), 0.08));
   color: var(--accent-3);
-  box-shadow: inset 0 0 0 1px rgba(52, 211, 153, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.35);
 }
 
 .pill {
   padding: 0.5rem 1rem;
-  border-radius: 9999px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  background: rgba(10, 15, 13, 0.6);
-  border: 1px solid var(--border);
-  color: var(--muted-2);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  font-family: inherit;
+  border-radius: 9999px; font-size: 0.8125rem; font-weight: 600;
+  background: rgba(10, 15, 13, 0.6); border: 1px solid var(--border);
+  color: var(--muted-2); cursor: pointer; transition: all 0.2s ease;
+  white-space: nowrap; font-family: inherit;
 }
 .pill:hover { color: var(--fg); border-color: var(--border-strong); }
 .pill.active {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(16, 185, 129, 0.08));
-  border-color: rgba(52, 211, 153, 0.4);
+  background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.22), rgba(var(--accent-rgb), 0.08));
+  border-color: rgba(var(--accent-rgb), 0.4);
   color: var(--accent-3);
 }
 
-.gasto-item {
+.gasto-item, .renda-item {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 1rem;
-  padding: 1rem 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
   transition: all 0.25s ease;
   animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.gasto-item {
+  padding: 1rem 1.25rem;
+  display: flex; align-items: center; gap: 1rem;
 }
 .gasto-item:hover {
   background: var(--card-hover);
   border-color: var(--border-strong);
   transform: translateX(4px);
 }
-
 .renda-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  background: rgba(10, 15, 13, 0.4);
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  padding: 0.625rem 0.875rem;
-  transition: all 0.2s ease;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 0.75rem; padding: 0.625rem 0.875rem;
 }
 .renda-item:hover { border-color: var(--border-strong); background: rgba(10, 15, 13, 0.6); }
 
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes slideOut {
-  to { opacity: 0; transform: translateX(40px); }
-}
+@keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideOut { to { opacity: 0; transform: translateX(40px); } }
 .gasto-item.removing { animation: slideOut 0.3s forwards; }
 
 .badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.2rem 0.55rem;
-  border-radius: 9999px;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  padding: 0.2rem 0.55rem; border-radius: 9999px;
+  font-size: 0.6875rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em;
 }
-.badge-fixo {
-  background: rgba(251, 191, 36, 0.12);
-  color: var(--gold);
-  border: 1px solid rgba(251, 191, 36, 0.28);
-}
-.badge-parcelado {
-  background: rgba(52, 211, 153, 0.12);
-  color: var(--accent-3);
-  border: 1px solid rgba(52, 211, 153, 0.28);
-}
-.badge-muted {
-  background: rgba(122, 138, 130, 0.1);
-  color: var(--muted-2);
-  border: 1px solid rgba(122, 138, 130, 0.2);
-}
+.badge-fixo { background: rgba(251, 191, 36, 0.12); color: var(--gold); border: 1px solid rgba(251, 191, 36, 0.28); }
+.badge-parcelado { background: rgba(var(--accent-rgb), 0.12); color: var(--accent-3); border: 1px solid rgba(var(--accent-rgb), 0.28); }
+.badge-muted { background: rgba(122, 138, 130, 0.1); color: var(--muted-2); border: 1px solid rgba(122, 138, 130, 0.2); }
 
 .stat-card {
   background: var(--card);
@@ -254,21 +240,15 @@ body::before {
   border-radius: 1.25rem;
   padding: 1.25rem;
   transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+  position: relative; overflow: hidden;
 }
 .stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
+  content: ''; position: absolute; top: 0; left: 0;
   width: 100%; height: 2px;
   background: linear-gradient(90deg, transparent, var(--accent), transparent);
   opacity: 0.5;
 }
-.stat-card:hover {
-  border-color: var(--border-strong);
-  transform: translateY(-2px);
-}
+.stat-card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
 
 .toast {
   background: rgba(15, 22, 20, 0.95);
@@ -276,11 +256,8 @@ body::before {
   border: 1px solid var(--border-strong);
   border-radius: 0.875rem;
   padding: 0.875rem 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+  display: flex; align-items: center; gap: 0.75rem;
+  font-size: 0.875rem; font-weight: 500;
   box-shadow: 0 16px 40px -8px rgba(0,0,0,0.5);
   animation: toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   min-width: 240px;
@@ -290,114 +267,54 @@ body::before {
 .toast.danger { border-color: rgba(239, 68, 68, 0.45); }
 .toast.out { animation: toastOut 0.3s forwards; }
 
-@keyframes toastIn {
-  from { opacity: 0; transform: translateX(40px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-@keyframes toastOut {
-  to { opacity: 0; transform: translateX(40px); }
-}
+@keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes toastOut { to { opacity: 0; transform: translateX(40px); } }
 
-.donut-bg { stroke: rgba(52, 211, 153, 0.1); }
+.donut-bg { stroke: rgba(var(--accent-2-rgb), 0.1); }
 .donut-fg { 
   transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.4s ease;
   stroke-linecap: round;
 }
 
-.custom-check {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.625rem;
-  cursor: pointer;
-  user-select: none;
-}
+.custom-check { position: relative; display: inline-flex; align-items: center; gap: 0.625rem; cursor: pointer; user-select: none; }
 .custom-check input { position: absolute; opacity: 0; pointer-events: none; }
 .check-box {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
+  width: 20px; height: 20px; border-radius: 6px;
   border: 1.5px solid var(--border-strong);
   background: rgba(10, 15, 13, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s ease; flex-shrink: 0;
 }
 .custom-check input:checked ~ .check-box {
-  background: linear-gradient(135deg, var(--accent), #059669);
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
   border-color: var(--accent);
 }
-.check-box svg {
-  width: 14px;
-  height: 14px;
-  color: #042318;
-  opacity: 0;
-  transform: scale(0.5);
-  transition: all 0.2s ease;
-}
-.custom-check input:checked ~ .check-box svg {
-  opacity: 1;
-  transform: scale(1);
-}
+.check-box svg { width: 14px; height: 14px; color: #042318; opacity: 0; transform: scale(0.5); transition: all 0.2s ease; }
+.custom-check input:checked ~ .check-box svg { opacity: 1; transform: scale(1); }
 
-.empty-state {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: var(--muted);
-}
+.empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
 
-.dist-bar {
-  height: 8px;
-  border-radius: 4px;
-  background: rgba(52, 211, 153, 0.08);
-  overflow: hidden;
-  position: relative;
-}
-.dist-bar-fill {
-  height: 100%;
-  border-radius: 4px;
-  background: linear-gradient(90deg, var(--accent), var(--accent-2));
-  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease;
-}
+.dist-bar { height: 8px; border-radius: 4px; background: rgba(var(--accent-2-rgb), 0.08); overflow: hidden; position: relative; }
+.dist-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease; }
 
-.health-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  display: inline-block;
-  box-shadow: 0 0 12px currentColor;
-  animation: pulse-dot 2s ease infinite;
-}
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.85); }
-}
+.health-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; box-shadow: 0 0 12px currentColor; animation: pulse-dot 2s ease infinite; }
+@keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.85); } }
 
-.remove-btn {
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: transparent;
-  border: none;
-  color: var(--muted);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.remove-btn:hover {
-  background: rgba(239, 68, 68, 0.1);
-  color: #f87171;
-}
+.remove-btn { flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px; background: transparent; border: none; color: var(--muted); cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; }
+.remove-btn:hover { background: rgba(239, 68, 68, 0.1); color: #f87171; }
+
+.online-ping { width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 8px #34d399; animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+@keyframes ping { 0% { transform: scale(1); opacity: 1; } 75%, 100% { transform: scale(2); opacity: 0; } }
+.online-dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; }
+
+.theme-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.1); cursor: pointer; transition: transform 0.2s; }
+.theme-dot:hover { transform: scale(1.15); }
+.theme-dot.active { border-color: rgba(255,255,255,0.8); box-shadow: 0 0 10px rgba(255,255,255,0.3); }
 
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(52, 211, 153, 0.2); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(52, 211, 153, 0.4); }
+::-webkit-scrollbar-thumb { background: rgba(var(--accent-2-rgb), 0.2); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(var(--accent-2-rgb), 0.4); }
 
 @media (max-width: 640px) {
   .gasto-item { flex-wrap: wrap; }
@@ -405,20 +322,17 @@ body::before {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
 </style>
 </head>
 <body>
 
-<div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+<div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-12">
 
-  <header class="flex items-center justify-between mb-10 md:mb-14">
+  <header class="flex flex-wrap items-center justify-between gap-4 mb-8 md:mb-12">
     <div class="flex items-center gap-3">
-      <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-700 flex items-center justify-center shadow-lg shadow-emerald-500/30 relative overflow-hidden">
+      <div class="w-11 h-11 rounded-2xl flex items-center justify-center shadow-lg relative overflow-hidden" style="background: linear-gradient(135deg, var(--accent), var(--accent-dark)); box-shadow: 0 8px 24px -8px rgba(var(--accent-rgb), 0.5);">
         <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#042318" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
@@ -429,16 +343,53 @@ body::before {
         <p class="text-[11px] text-[var(--muted)] tracking-wide">controle financeiro pessoal</p>
       </div>
     </div>
-    <div class="text-right">
-      <p class="text-[11px] uppercase tracking-wider text-[var(--muted)]">Hoje</p>
-      <p class="text-sm font-semibold" id="current-date">—</p>
+    
+    <div class="flex items-center gap-2 md:gap-3 ml-auto">
+      <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--card)] border border-[var(--border)]">
+        <span class="relative flex items-center justify-center w-2 h-2">
+          <span class="online-ping absolute"></span>
+          <span class="online-dot relative"></span>
+        </span>
+        <span class="text-xs font-semibold text-[var(--fg)]" id="online-count">0</span>
+        <span class="text-xs text-[var(--muted)]">online</span>
+      </div>
+      
+      <div class="relative">
+        <button id="theme-btn" class="btn-ghost h-10 w-10" aria-label="Mudar tema">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+        </button>
+        <div id="theme-dropdown" class="hidden absolute right-0 mt-2 w-48 glass rounded-xl p-3 z-50 shadow-2xl">
+          <p class="text-xs text-[var(--muted)] mb-2 px-1">Escolha seu tema</p>
+          <div class="grid grid-cols-4 gap-2 justify-items-center">
+            <div class="theme-dot active" data-theme="emerald" style="background: #10b981;" title="Esmeralda"></div>
+            <div class="theme-dot" data-theme="ocean" style="background: #0ea5e9;" title="Oceano"></div>
+            <div class="theme-dot" data-theme="purple" style="background: #a855f7;" title="Ametista"></div>
+            <div class="theme-dot" data-theme="rose" style="background: #f43f5e;" title="Rosé"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="hidden md:block text-right">
+        <p class="text-[11px] uppercase tracking-wider text-[var(--muted)]">Hoje</p>
+        <p class="text-sm font-semibold" id="current-date">—</p>
+      </div>
     </div>
   </header>
+  
+  <!-- Contador Online Mobile -->
+  <div class="sm:hidden flex items-center justify-center gap-2 mb-6 px-3 py-1.5 rounded-full bg-[var(--card)] border border-[var(--border)] w-max mx-auto">
+    <span class="relative flex items-center justify-center w-2 h-2">
+      <span class="online-ping absolute"></span>
+      <span class="online-dot relative"></span>
+    </span>
+    <span class="text-xs font-semibold text-[var(--fg)]" id="online-count-mobile">0</span>
+    <span class="text-xs text-[var(--muted)]">pessoas online</span>
+  </div>
   
   <section class="grid grid-cols-1 lg:grid-cols-5 gap-5 mb-6">
     
     <div class="glass rounded-3xl p-6 md:p-8 lg:col-span-3 relative overflow-hidden">
-      <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+      <div class="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" style="background: rgba(var(--accent-rgb), 0.1);"></div>
       <div class="relative">
         <div class="flex items-center justify-between mb-3">
           <span class="text-[11px] uppercase tracking-wider text-[var(--muted)] font-semibold">Renda líquida total</span>
@@ -486,12 +437,12 @@ body::before {
   <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
     <div class="stat-card">
       <div class="flex items-center gap-2 mb-2">
-        <div class="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(var(--accent-rgb), 0.1);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
         </div>
         <span class="text-[11px] uppercase tracking-wider text-[var(--muted)] font-semibold">Comprometido</span>
       </div>
-      <p class="font-display text-2xl font-bold" id="stat-comprometido">R$ 0,00</p>
+      <p class="font-display text-xl md:text-2xl font-bold" id="stat-comprometido">R$ 0,00</p>
     </div>
     <div class="stat-card">
       <div class="flex items-center gap-2 mb-2">
@@ -500,25 +451,25 @@ body::before {
         </div>
         <span class="text-[11px] uppercase tracking-wider text-[var(--muted)] font-semibold">Disponível</span>
       </div>
-      <p class="font-display text-2xl font-bold" id="stat-disponivel">R$ 0,00</p>
+      <p class="font-display text-xl md:text-2xl font-bold" id="stat-disponivel">R$ 0,00</p>
     </div>
     <div class="stat-card">
       <div class="flex items-center gap-2 mb-2">
-        <div class="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6ee7b7" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>
+        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(var(--accent-rgb), 0.1);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-3)" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>
         </div>
         <span class="text-[11px] uppercase tracking-wider text-[var(--muted)] font-semibold">Gastos</span>
       </div>
-      <p class="font-display text-2xl font-bold" id="stat-count">0</p>
+      <p class="font-display text-xl md:text-2xl font-bold" id="stat-count">0</p>
     </div>
     <div class="stat-card">
       <div class="flex items-center gap-2 mb-2">
         <div class="w-7 h-7 rounded-lg bg-amber-500/10 flex items-center justify-center">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
-        <span class="text-[11px] uppercase tracking-wider text-[var(--muted)] font-semibold">Parcelas ativas</span>
+        <span class="text-[11px] uppercase tracking-wider text-[var(--muted)] font-semibold">Parcelas</span>
       </div>
-      <p class="font-display text-2xl font-bold" id="stat-parcelas">0</p>
+      <p class="font-display text-xl md:text-2xl font-bold" id="stat-parcelas">0</p>
     </div>
   </section>
   
@@ -582,7 +533,7 @@ body::before {
         Seus gastos
         <span class="text-sm font-medium text-[var(--muted)]" id="gastos-count-label"></span>
       </h2>
-      <div class="flex gap-2 overflow-x-auto pb-1" id="filters">
+      <div class="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1" id="filters">
         <button type="button" class="pill active" data-filter="all">Todos</button>
         <button type="button" class="pill" data-filter="fixo">Fixos</button>
         <button type="button" class="pill" data-filter="parcelado">Parcelados</button>
@@ -593,7 +544,7 @@ body::before {
     <div id="gastos-list" class="space-y-3"></div>
     
     <div id="empty-state" class="empty-state hidden">
-      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-500/5 border border-[var(--border)] flex items-center justify-center">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style="background: rgba(var(--accent-rgb), 0.05); border: 1px solid var(--border);">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--muted)]"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       </div>
       <p class="font-semibold text-[var(--fg)] mb-1" id="empty-title">Nenhum gasto ainda</p>
@@ -611,6 +562,7 @@ body::before {
 <script>
 // ===== Estado e persistência =====
 const STORAGE_KEY = 'bolsa-financas-v2';
+const THEME_KEY = 'bolsa-tema';
 
 const State = {
   rendas: [],
@@ -627,7 +579,6 @@ function loadState() {
       State.rendas = Array.isArray(data.rendas) ? data.rendas : [];
       State.gastos = Array.isArray(data.gastos) ? data.gastos : [];
     } else {
-      // Migração da v1: se existia um salário único, converte para renda
       const oldRaw = localStorage.getItem('bolsa-financas-v1');
       if (oldRaw) {
         const oldData = JSON.parse(oldRaw);
@@ -642,38 +593,16 @@ function loadState() {
 
 function saveState() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      rendas: State.rendas,
-      gastos: State.gastos
-    }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ rendas: State.rendas, gastos: State.gastos }));
   } catch(e) { console.warn('Falha ao salvar:', e); }
 }
 
 // ===== Utilidades =====
-function formatCurrency(n) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n);
-}
-
-function parseCurrencyInput(str) {
-  if (!str) return 0;
-  const digits = str.replace(/\D/g, '');
-  if (!digits) return 0;
-  return parseInt(digits, 10) / 100;
-}
-
-function formatCurrencyInput(str) {
-  const value = parseCurrencyInput(str);
-  if (value === 0) return '';
-  return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-}
-
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+function formatCurrency(n) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n); }
+function parseCurrencyInput(str) { if (!str) return 0; const digits = str.replace(/\D/g, ''); return digits ? parseInt(digits, 10) / 100 : 0; }
+function formatCurrencyInput(str) { const v = parseCurrencyInput(str); return v === 0 ? '' : v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 // ===== Toast =====
 function showToast(message, type = 'success') {
@@ -687,34 +616,20 @@ function showToast(message, type = 'success') {
   };
   toast.innerHTML = `${icons[type] || icons.success}<span>${escapeHtml(message)}</span>`;
   container.appendChild(toast);
-  setTimeout(() => {
-    toast.classList.add('out');
-    setTimeout(() => toast.remove(), 300);
-  }, 3200);
+  setTimeout(() => { toast.classList.add('out'); setTimeout(() => toast.remove(), 300); }, 3200);
 }
 
 // ===== Cálculos =====
-function getTotalRenda() {
-  return State.rendas.reduce((sum, r) => sum + r.valor, 0);
-}
-
-function getTotalComprometido() {
-  return State.gastos.reduce((sum, g) => sum + g.valor, 0);
-}
-
-function getPercentComprometido() {
-  const totalRenda = getTotalRenda();
-  if (totalRenda <= 0) return 0;
-  return (getTotalComprometido() / totalRenda) * 100;
-}
+function getTotalRenda() { return State.rendas.reduce((s, r) => s + r.valor, 0); }
+function getTotalComprometido() { return State.gastos.reduce((s, g) => s + g.valor, 0); }
+function getPercentComprometido() { const t = getTotalRenda(); return t <= 0 ? 0 : (getTotalComprometido() / t) * 100; }
 
 function getHealthColor(percent) {
-  if (percent < 50) return '#10b981';
+  if (percent < 50) return 'var(--accent)';
   if (percent < 70) return '#fbbf24';
   if (percent < 90) return '#f59e0b';
   return '#ef4444';
 }
-
 function getHealthStatus(percent) {
   if (percent === 0) return 'Sem gastos';
   if (percent < 30) return 'Excelente';
@@ -743,13 +658,13 @@ function renderRendas() {
   list.innerHTML = State.rendas.map(r => `
     <div class="renda-item" data-id="${r.id}">
       <div class="flex items-center gap-2 min-w-0">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" class="flex-shrink-0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2" class="flex-shrink-0">
           <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
         </svg>
         <span class="text-sm font-medium truncate">${escapeHtml(r.descricao)}</span>
       </div>
       <div class="flex items-center gap-3 flex-shrink-0">
-        <span class="text-sm font-semibold text-[var(--accent-3)]">${formatCurrency(r.valor)}</span>
+        <span class="text-sm font-semibold" style="color: var(--accent-3);">${formatCurrency(r.valor)}</span>
         <button type="button" class="remove-renda-btn text-[var(--muted)] hover:text-red-400 transition-colors" data-id="${r.id}" aria-label="Remover renda">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
@@ -757,64 +672,53 @@ function renderRendas() {
     </div>
   `).join('');
   
-  list.querySelectorAll('.remove-renda-btn').forEach(btn => {
-    btn.addEventListener('click', () => removeRenda(btn.dataset.id));
-  });
+  list.querySelectorAll('.remove-renda-btn').forEach(btn => btn.addEventListener('click', () => removeRenda(btn.dataset.id)));
 }
 
 function renderDonut() {
   const percent = Math.min(getPercentComprometido(), 100);
   const circle = document.getElementById('donut-fg');
   const r = 50;
-  const circumference = 2 * Math.PI * r;
-  const offset = circumference - (percent / 100) * circumference;
-  circle.setAttribute('stroke-dasharray', circumference);
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (percent / 100) * circ;
+  circle.setAttribute('stroke-dasharray', circ);
   circle.setAttribute('stroke-dashoffset', offset);
-  circle.setAttribute('stroke', getHealthColor(percent));
+  
+  const color = getHealthColor(percent);
+  circle.setAttribute('stroke', color);
   document.getElementById('donut-percent').textContent = percent.toFixed(1) + '%';
   document.getElementById('donut-status').textContent = getHealthStatus(percent);
-  document.getElementById('health-dot').style.color = getHealthColor(percent);
+  document.getElementById('health-dot').style.color = color;
 }
 
 function renderStats() {
   const comprometido = getTotalComprometido();
-  const disponivel = getTotalRenda() - comprometido;
-  const parcelasCount = State.gastos.filter(g => g.tipo === 'parcelado').length;
   document.getElementById('stat-comprometido').textContent = formatCurrency(comprometido);
-  document.getElementById('stat-disponivel').textContent = formatCurrency(disponivel);
+  document.getElementById('stat-disponivel').textContent = formatCurrency(getTotalRenda() - comprometido);
   document.getElementById('stat-count').textContent = State.gastos.length;
-  document.getElementById('stat-parcelas').textContent = parcelasCount;
+  document.getElementById('stat-parcelas').textContent = State.gastos.filter(g => g.tipo === 'parcelado').length;
 }
 
 function renderGastos() {
   const list = document.getElementById('gastos-list');
   const empty = document.getElementById('empty-state');
-  const emptyTitle = document.getElementById('empty-title');
-  const emptyDesc = document.getElementById('empty-desc');
   
   let filtered = State.gastos;
   if (State.filter === 'fixo') filtered = filtered.filter(g => g.tipo === 'fixo');
   else if (State.filter === 'parcelado') filtered = filtered.filter(g => g.tipo === 'parcelado');
   else if (State.filter === 'historico') filtered = filtered.filter(g => g.historico);
   
-  document.getElementById('gastos-count-label').textContent = 
-    State.gastos.length > 0 ? `· ${filtered.length} de ${State.gastos.length}` : '';
+  document.getElementById('gastos-count-label').textContent = State.gastos.length > 0 ? `· ${filtered.length} de ${State.gastos.length}` : '';
   
   if (filtered.length === 0) {
     list.innerHTML = '';
     empty.classList.remove('hidden');
-    if (State.gastos.length > 0) {
-      emptyTitle.textContent = 'Nenhum gasto neste filtro';
-      emptyDesc.textContent = 'Tente outro filtro acima.';
-    } else {
-      emptyTitle.textContent = 'Nenhum gasto ainda';
-      emptyDesc.textContent = 'Adicione seu primeiro gasto usando o formulário acima.';
-    }
+    document.getElementById('empty-title').textContent = State.gastos.length > 0 ? 'Nenhum gasto neste filtro' : 'Nenhum gasto ainda';
+    document.getElementById('empty-desc').textContent = State.gastos.length > 0 ? 'Tente outro filtro acima.' : 'Adicione seu primeiro gasto usando o formulário acima.';
     return;
   }
   
   empty.classList.add('hidden');
-  
   const totalRenda = getTotalRenda();
   
   list.innerHTML = filtered.map(g => {
@@ -825,11 +729,9 @@ function renderGastos() {
     
     return `
       <div class="gasto-item" data-id="${g.id}">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/15 to-emerald-700/10 border border-[var(--border)] flex items-center justify-center flex-shrink-0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2">
-            ${isParc 
-              ? '<path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/>'
-              : '<rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>'}
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(var(--accent-rgb), 0.15); border: 1px solid var(--border);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2">
+            ${isParc ? '<path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/>' : '<rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>'}
           </svg>
         </div>
         <div class="flex-1 min-w-0">
@@ -858,22 +760,17 @@ function renderGastos() {
     `;
   }).join('');
   
-  list.querySelectorAll('.remove-btn').forEach(btn => {
-    btn.addEventListener('click', () => removeGasto(btn.dataset.id));
-  });
+  list.querySelectorAll('.remove-btn').forEach(btn => btn.addEventListener('click', () => removeGasto(btn.dataset.id)));
 }
 
 function renderPreview() {
-  const valorStr = document.getElementById('gasto-valor').value;
-  const valor = parseCurrencyInput(valorStr);
+  const valor = parseCurrencyInput(document.getElementById('gasto-valor').value);
   const bar = document.getElementById('preview-bar');
   const totalRenda = getTotalRenda();
   
-  if (valor <= 0 || totalRenda <= 0) {
-    bar.classList.add('hidden');
-    return;
-  }
+  if (valor <= 0 || totalRenda <= 0) { bar.classList.add('hidden'); return; }
   bar.classList.remove('hidden');
+  
   const percent = (valor / totalRenda) * 100;
   const color = getHealthColor(percent);
   document.getElementById('preview-percent').textContent = percent.toFixed(1) + '% da renda';
@@ -883,101 +780,99 @@ function renderPreview() {
   fill.style.background = color;
 }
 
-function renderAll() {
-  renderRendas();
-  renderDonut();
-  renderStats();
-  renderGastos();
-  renderPreview();
-}
+function renderAll() { renderRendas(); renderDonut(); renderStats(); renderGastos(); renderPreview(); }
 
 // ===== Ações =====
-function addRenda(descricao, valor) {
-  State.rendas.push({ id: uid(), descricao, valor });
-  saveState();
-  renderAll();
-}
-
-function removeRenda(id) {
-  State.rendas = State.rendas.filter(r => r.id !== id);
-  saveState();
-  renderAll();
-  showToast('Renda removida', 'success');
-}
+function addRenda(descricao, valor) { State.rendas.push({ id: uid(), descricao, valor }); saveState(); renderAll(); }
+function removeRenda(id) { State.rendas = State.rendas.filter(r => r.id !== id); saveState(); renderAll(); showToast('Renda removida', 'success'); }
 
 function addGasto(data) {
-  const gasto = {
-    id: uid(),
-    descricao: data.descricao,
-    valor: data.valor,
-    tipo: data.tipo,
-    parcelas: data.tipo === 'parcelado' ? data.parcelas : 1,
-    historico: data.historico,
-    createdAt: Date.now()
-  };
+  const gasto = { id: uid(), descricao: data.descricao, valor: data.valor, tipo: data.tipo, parcelas: data.tipo === 'parcelado' ? data.parcelas : 1, historico: data.historico, createdAt: Date.now() };
   State.gastos.unshift(gasto);
-  saveState();
-  renderAll();
+  saveState(); renderAll();
   
   const newPercent = getPercentComprometido();
-  if (newPercent >= 90) {
-    showToast(`Alerta: ${newPercent.toFixed(0)}% da renda comprometida!`, 'danger');
-  } else if (newPercent >= 70) {
-    showToast(`Atenção: ${newPercent.toFixed(0)}% comprometido.`, 'warning');
-  } else {
-    showToast(`Gasto adicionado: ${formatCurrency(gasto.valor)}/mês`, 'success');
-  }
+  if (newPercent >= 90) showToast(`Alerta: ${newPercent.toFixed(0)}% da renda comprometida!`, 'danger');
+  else if (newPercent >= 70) showToast(`Atenção: ${newPercent.toFixed(0)}% comprometido.`, 'warning');
+  else showToast(`Gasto adicionado: ${formatCurrency(gasto.valor)}/mês`, 'success');
 }
 
 function removeGasto(id) {
   const item = document.querySelector(`.gasto-item[data-id="${id}"]`);
   if (item) {
     item.classList.add('removing');
-    setTimeout(() => {
-      State.gastos = State.gastos.filter(g => g.id !== id);
-      saveState();
-      renderAll();
-      showToast('Gasto removido', 'success');
-    }, 280);
+    setTimeout(() => { State.gastos = State.gastos.filter(g => g.id !== id); saveState(); renderAll(); showToast('Gasto removido', 'success'); }, 280);
   }
+}
+
+// ===== Temas =====
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem(THEME_KEY, theme);
+  document.querySelectorAll('.theme-dot').forEach(d => d.classList.toggle('active', d.dataset.theme === theme));
+  renderAll(); // Re-render para atualizar cores nos gráficos
+}
+
+function bindThemeEvents() {
+  const savedTheme = localStorage.getItem(THEME_KEY) || 'emerald';
+  applyTheme(savedTheme);
+  
+  document.getElementById('theme-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('theme-dropdown').classList.toggle('hidden');
+  });
+  
+  document.querySelectorAll('.theme-dot').forEach(dot => {
+    dot.addEventListener('click', () => {
+      applyTheme(dot.dataset.theme);
+      document.getElementById('theme-dropdown').classList.add('hidden');
+      showToast(`Tema ${dot.dataset.theme} aplicado`, 'success');
+    });
+  });
+  
+  document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('theme-dropdown');
+    if (!dropdown.contains(e.target) && e.target.id !== 'theme-btn') dropdown.classList.add('hidden');
+  });
+}
+
+// ===== Online Counter (Simulação Realista) =====
+function initOnlineCounter() {
+  let onlineUsers = Math.floor(Math.random() * 30) + 15; // Base inicial 15-44
+  const updateCount = () => {
+    const el1 = document.getElementById('online-count');
+    const el2 = document.getElementById('online-count-mobile');
+    if (el1) el1.textContent = onlineUsers;
+    if (el2) el2.textContent = onlineUsers;
+  };
+  updateCount();
+  setInterval(() => {
+    const change = Math.floor(Math.random() * 7) - 3; // -3 a +3
+    onlineUsers = Math.max(8, Math.min(99, onlineUsers + change));
+    updateCount();
+  }, 4000 + Math.random() * 2000);
 }
 
 // ===== Eventos =====
 function bindEvents() {
-  // Adicionar Renda
   const rendaDescInput = document.getElementById('renda-descricao');
   const rendaValorInput = document.getElementById('renda-valor');
   
-  rendaValorInput.addEventListener('input', (e) => {
-    e.target.value = formatCurrencyInput(e.target.value);
-  });
+  rendaValorInput.addEventListener('input', (e) => e.target.value = formatCurrencyInput(e.target.value));
   
   function handleAddRenda() {
     const descricao = rendaDescInput.value.trim() || 'Renda extra';
     const valor = parseCurrencyInput(rendaValorInput.value);
-    
-    if (valor <= 0) {
-      showToast('Informe um valor válido para a renda', 'warning');
-      return;
-    }
-    
+    if (valor <= 0) { showToast('Informe um valor válido para a renda', 'warning'); return; }
     addRenda(descricao, valor);
     showToast(`Renda adicionada: ${formatCurrency(valor)}`, 'success');
-    
-    rendaDescInput.value = '';
-    rendaValorInput.value = '';
-    rendaDescInput.focus();
+    rendaDescInput.value = ''; rendaValorInput.value = ''; rendaDescInput.focus();
   }
   
   document.getElementById('add-renda-btn').addEventListener('click', handleAddRenda);
-  rendaValorInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') { e.preventDefault(); handleAddRenda(); }
-  });
-  rendaDescInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') { e.preventDefault(); rendaValorInput.focus(); }
-  });
+  rendaValorInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddRenda(); } });
+  rendaDescInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); rendaValorInput.focus(); } });
   
-  // Tipo de gasto
   document.querySelectorAll('#tipo-control .seg-option').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('#tipo-control .seg-option').forEach(b => b.classList.remove('active'));
@@ -987,14 +882,9 @@ function bindEvents() {
     });
   });
   
-  // Valor do gasto
   const valorInput = document.getElementById('gasto-valor');
-  valorInput.addEventListener('input', (e) => {
-    e.target.value = formatCurrencyInput(e.target.value);
-    renderPreview();
-  });
+  valorInput.addEventListener('input', (e) => { e.target.value = formatCurrencyInput(e.target.value); renderPreview(); });
   
-  // Submit gasto
   document.getElementById('gasto-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const descricao = document.getElementById('gasto-descricao').value.trim();
@@ -1004,16 +894,9 @@ function bindEvents() {
     
     if (!descricao) { showToast('Adicione uma descrição', 'warning'); return; }
     if (valor <= 0) { showToast('Informe um valor válido', 'warning'); return; }
-    if (State.formTipo === 'parcelado' && (parcelas < 2 || parcelas > 48)) {
-      showToast('Parcelas deve ser entre 2 e 48', 'warning'); return;
-    }
+    if (State.formTipo === 'parcelado' && (parcelas < 2 || parcelas > 48)) { showToast('Parcelas deve ser entre 2 e 48', 'warning'); return; }
     
-    addGasto({
-      descricao, valor,
-      tipo: State.formTipo,
-      parcelas: State.formTipo === 'parcelado' ? parcelas : 1,
-      historico
-    });
+    addGasto({ descricao, valor, tipo: State.formTipo, parcelas: State.formTipo === 'parcelado' ? parcelas : 1, historico });
     
     document.getElementById('gasto-descricao').value = '';
     document.getElementById('gasto-valor').value = '';
@@ -1022,7 +905,6 @@ function bindEvents() {
     document.getElementById('gasto-descricao').focus();
   });
   
-  // Filtros
   document.querySelectorAll('#filters .pill').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('#filters .pill').forEach(b => b.classList.remove('active'));
@@ -1032,12 +914,8 @@ function bindEvents() {
     });
   });
   
-  // Atalho global
   document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-      e.preventDefault();
-      document.getElementById('gasto-form').requestSubmit();
-    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); document.getElementById('gasto-form').requestSubmit(); }
   });
 }
 
@@ -1045,8 +923,10 @@ function bindEvents() {
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
   renderDate();
+  bindThemeEvents();
   bindEvents();
   renderAll();
+  initOnlineCounter();
 });
 </script>
 
