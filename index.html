@@ -871,7 +871,7 @@ function initCounters() {
     document.getElementById('online-count-mobile').textContent = online;
   };
   updateOnline();
-  setInterval(() => { online = Math.max(5, Math.min(60, online + (Math.floor(Math.random() * 7) - 3)))); updateOnline(); }, 5000);
+  setInterval(() => { online = Math.max(5, Math.min(60, online + (Math.floor(Math.random() * 7) - 3))); updateOnline(); }, 5000);
 }
 
 // ===== Eventos =====
@@ -936,8 +936,6 @@ function bindEvents() {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); document.getElementById('gasto-form').requestSubmit(); }
   });
   
-  // Data no header
-  document.getElementById('current-date').textContent = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
