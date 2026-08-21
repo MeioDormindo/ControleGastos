@@ -510,6 +510,10 @@ body::before {
           <option value="outros" selected>Outros</option>
         </select>
       </div>
+      <div class="md:col-span-3">
+        <label for="gasto-competencia" class="text-xs font-semibold text-[var(--muted-2)] mb-1.5 block">Mês de referência</label>
+        <input type="month" id="gasto-competencia" class="input-field" required>
+      </div>
       <div class="md:col-span-3 hidden" id="parcelas-wrapper">
         <label for="gasto-parcelas" class="text-xs font-semibold text-[var(--muted-2)] mb-1.5 block">Nº de parcelas</label>
         <input type="number" id="gasto-parcelas" class="input-field" min="2" max="48" value="2">
@@ -575,8 +579,8 @@ body::before {
     <div class="glass rounded-3xl p-6 lg:col-span-2">
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h2 class="font-display text-lg font-bold">Histórico mensal</h2>
-          <p class="text-xs text-[var(--muted)]">Gastos registrados nos últimos meses</p>
+          <h2 class="font-display text-lg font-bold">Planejamento mensal</h2>
+          <p class="text-xs text-[var(--muted)]">Gastos previstos para os próximos meses</p>
         </div>
         <span class="badge badge-parcelado">6 meses</span>
       </div>
@@ -743,7 +747,19 @@ const CATEGORIES = {
   lazer: 'Lazer', educacao: 'Educação', assinaturas: 'Assinaturas', outros: 'Outros'
 };
 function getCategoryLabel(category) { return CATEGORIES[category] || CATEGORIES.outros; }
-function getExpenseDate(gasto) { return new Date(gasto.createdAt || Date.now()); }
+function getCurrentMonthValue() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+}
+function getExpenseDate(gasto) {
+  if (typeof gasto.competencia === 'string' && /^\d{4}-\d{2}$/.test(gasto.competencia)) {
+    return new Date(`${gasto.competencia}-01T12:00:00`);
+  }
+  return new Date(gasto.createdAt || Date.now());
+}
+function getExpenseMonthLabel(gasto) {
+  return getExpenseDate(gasto).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+}
 function matchesDateFilters(gasto) {
   const date = getExpenseDate(gasto);
   return (State.monthFilter === 'all' || date.getMonth() === Number(State.monthFilter)) &&
@@ -841,6 +857,7 @@ function renderGastos() {
           </div>
           <div class="flex items-center gap-2 mt-1 text-xs text-[var(--muted)] flex-wrap">
             <span>${formatCurrency(g.valor)}/mês</span>
+            <span>·</span><span>${getExpenseMonthLabel(g)}</span>
             ${isP ? `<span>·</span><span>Total: ${formatCurrency(vt)}</span>` : ''}
             <span>·</span><span style="color: ${c}; font-weight: 600;">${p.toFixed(1)}% da renda</span>
           </div>
@@ -863,7 +880,7 @@ function renderHistoryChart() {
   canvas.width = width * ratio; canvas.height = height * ratio; context.setTransform(ratio, 0, 0, ratio, 0, 0);
   context.clearRect(0, 0, width, height);
   const now = new Date();
-  const months = Array.from({ length: 6 }, (_, index) => new Date(now.getFullYear(), now.getMonth() - 5 + index, 1));
+  const months = Array.from({ length: 6 }, (_, index) => new Date(now.getFullYear(), now.getMonth() + index, 1));
   const values = months.map(month => State.gastos.filter(gasto => { const date = getExpenseDate(gasto); return date.getFullYear() === month.getFullYear() && date.getMonth() === month.getMonth(); }).reduce((sum, gasto) => sum + gasto.valor, 0));
   const max = Math.max(...values, 1), padding = { top: 12, right: 10, bottom: 30, left: 10 }, chartHeight = height - padding.top - padding.bottom;
   const barWidth = (width - padding.left - padding.right) / months.length * 0.55;
@@ -1232,6 +1249,7 @@ function bindEvents() {
   
   const valorInput = document.getElementById('gasto-valor');
   valorInput.addEventListener('input', (e) => { if (!hasNegativeCurrencyInput(e.target.value)) e.target.value = formatCurrencyInput(e.target.value); renderPreview(); });
+  document.getElementById('gasto-competencia').value = getCurrentMonthValue();
   
   document.getElementById('gasto-form').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -1241,10 +1259,12 @@ function bindEvents() {
     const p = parseInt(document.getElementById('gasto-parcelas').value, 10) || 2;
     const h = document.getElementById('gasto-historico').checked;
     const categoria = document.getElementById('gasto-categoria').value;
+    const competencia = document.getElementById('gasto-competencia').value;
     if (!d) { showToast('Adicione uma descrição', 'warning'); return; }
     if (v <= 0) { showToast('Informe um valor válido', 'warning'); return; }
+    if (!/^\d{4}-\d{2}$/.test(competencia)) { showToast('Informe um mês de referência válido', 'warning'); return; }
     if (State.formTipo === 'parcelado' && (p < 2 || p > 48)) { showToast('Parcelas deve ser entre 2 e 48', 'warning'); return; }
-    addGasto({ descricao: d, valor: v, tipo: State.formTipo, parcelas: State.formTipo === 'parcelado' ? p : 1, historico: h, categoria });
+    addGasto({ descricao: d, valor: v, tipo: State.formTipo, parcelas: State.formTipo === 'parcelado' ? p : 1, historico: h, categoria, competencia });
     document.getElementById('gasto-descricao').value = '';
     document.getElementById('gasto-valor').value = '';
     document.getElementById('gasto-historico').checked = true;
