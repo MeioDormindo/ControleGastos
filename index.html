@@ -16,7 +16,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
+<link rel="stylesheet" href="css/styles.css">
+<style media="not all">
 /* ===== Temas Padrão ===== */
 :root, [data-theme="emerald"] {
   --bg: #0a0f0d; --card: rgba(20, 30, 26, 0.55); --card-hover: rgba(25, 38, 33, 0.75);
@@ -669,6 +670,7 @@ body::before {
 
 <div id="toast-container" class="fixed bottom-6 right-6 z-50 space-y-2 max-w-[calc(100vw-3rem)]"></div>
 
+<script src="js/config.js"></script>
 <script>
 const STORAGE_KEY = 'bolsa-financas-v2';
 const THEME_KEY = 'bolsa-tema';
@@ -742,10 +744,7 @@ function getHealthStatus(percent) {
   return 'Crítico';
 }
 
-const CATEGORIES = {
-  moradia: 'Moradia', alimentacao: 'Alimentação', transporte: 'Transporte', saude: 'Saúde',
-  lazer: 'Lazer', educacao: 'Educação', assinaturas: 'Assinaturas', outros: 'Outros'
-};
+const CATEGORIES = window.APP_CONFIG.categories;
 function getCategoryLabel(category) { return CATEGORIES[category] || CATEGORIES.outros; }
 function getCurrentMonthValue() {
   const now = new Date();

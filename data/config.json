@@ -1,0 +1,24 @@
+{
+  "app": {
+    "name": "MeioDormindo",
+    "storageKey": "bolsa-financas-v2",
+    "defaultTheme": "emerald",
+    "defaultLanguage": "pt-BR"
+  },
+  "categories": {
+    "moradia": "Moradia",
+    "alimentacao": "Alimentação",
+    "transporte": "Transporte",
+    "saude": "Saúde",
+    "lazer": "Lazer",
+    "educacao": "Educação",
+    "assinaturas": "Assinaturas",
+    "outros": "Outros"
+  },
+  "limits": {
+    "installments": {
+      "min": 2,
+      "max": 48
+    }
+  }
+}
