@@ -329,6 +329,15 @@ body::before {
     </div>
     
     <div class="flex items-center gap-2 md:gap-3 ml-auto">
+      <button id="export-json-btn" class="btn-ghost h-10 px-3 gap-2 text-xs font-semibold" title="Exportar backup JSON" aria-label="Exportar backup JSON">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+        <span class="hidden md:inline">Backup</span>
+      </button>
+      <button id="import-json-btn" class="btn-ghost h-10 px-3 gap-2 text-xs font-semibold" title="Restaurar backup JSON" aria-label="Restaurar backup JSON">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3"/><path d="m17 8-5-5-5 5"/><path d="M5 21h14"/></svg>
+        <span class="hidden md:inline">Restaurar</span>
+      </button>
+      <input type="file" id="import-json-input" accept="application/json,.json" class="hidden">
       <button id="export-pdf-btn" class="btn-ghost h-10 px-3 gap-2 text-xs font-semibold" title="Exportar Relatório">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         <span class="hidden md:inline">PDF</span>
@@ -589,6 +598,47 @@ body::before {
   </footer>
 </div>
 
+<div id="edit-gasto-modal" class="hidden fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/70">
+  <form id="edit-gasto-form" class="glass rounded-3xl p-6 w-full max-w-lg shadow-2xl">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="font-display text-lg font-bold">Editar gasto</h2>
+      <button type="button" id="close-edit-gasto" class="btn-ghost" aria-label="Fechar edição">✕</button>
+    </div>
+    <input type="hidden" id="edit-gasto-id">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="sm:col-span-2">
+        <label for="edit-gasto-descricao" class="text-xs font-semibold text-[var(--muted-2)] mb-1.5 block">Descrição</label>
+        <input type="text" id="edit-gasto-descricao" class="input-field" required maxlength="50">
+      </div>
+      <div>
+        <label for="edit-gasto-valor" class="text-xs font-semibold text-[var(--muted-2)] mb-1.5 block">Valor mensal (R$)</label>
+        <input type="text" id="edit-gasto-valor" class="input-field" inputmode="numeric" required>
+      </div>
+      <div>
+        <label for="edit-gasto-categoria" class="text-xs font-semibold text-[var(--muted-2)] mb-1.5 block">Categoria</label>
+        <select id="edit-gasto-categoria" class="input-field"></select>
+      </div>
+      <div>
+        <label for="edit-gasto-competencia" class="text-xs font-semibold text-[var(--muted-2)] mb-1.5 block">Mês de referência</label>
+        <input type="month" id="edit-gasto-competencia" class="input-field" required>
+      </div>
+      <div>
+        <label for="edit-gasto-parcelas" class="text-xs font-semibold text-[var(--muted-2)] mb-1.5 block">Nº de parcelas</label>
+        <input type="number" id="edit-gasto-parcelas" class="input-field" min="2" max="48">
+      </div>
+    </div>
+    <label class="custom-check mt-5">
+      <input type="checkbox" id="edit-gasto-historico">
+      <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+      <span class="text-sm font-medium">Incluir no histórico de acompanhamento</span>
+    </label>
+    <div class="flex justify-end gap-2 mt-6">
+      <button type="button" id="cancel-edit-gasto" class="btn-ghost px-4">Cancelar</button>
+      <button type="submit" class="btn-primary">Salvar alterações</button>
+    </div>
+  </form>
+</div>
+
 <!-- Estrutura Oculta para Geração de PDF -->
 <div id="pdf-report">
   <div style="font-family: 'Helvetica', sans-serif; color: #1a1a1a; padding: 40px; width: 100%;">
@@ -704,7 +754,7 @@ function showToast(message, type = 'success') {
 
 // ===== Cálculos =====
 function getTotalRenda() { return State.rendas.reduce((s, r) => s + r.valor, 0); }
-function getTotalComprometido() { return State.gastos.reduce((s, g) => s + g.valor, 0); }
+function getTotalComprometido() { return getPeriodExpenses().reduce((s, g) => s + g.valor, 0); }
 function getPercentComprometido() { const t = getTotalRenda(); return t <= 0 ? 0 : (getTotalComprometido() / t) * 100; }
 function getHealthColor(percent) {
   if (percent < 50) return 'var(--accent)';
@@ -736,11 +786,20 @@ function getExpenseDate(gasto) {
 function getExpenseMonthLabel(gasto) {
   return getExpenseDate(gasto).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
 }
+function getInstallmentSchedule(gasto) {
+  if (gasto.tipo !== 'parcelado') return [];
+  const start = getExpenseDate(gasto);
+  return Array.from({ length: Number(gasto.parcelas) || 1 }, (_, index) => {
+    const date = new Date(start.getFullYear(), start.getMonth() + index, 1);
+    return `${index + 1}ª: ${date.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }).replace('.', '')}`;
+  });
+}
 function matchesDateFilters(gasto) {
   const date = getExpenseDate(gasto);
   return (State.monthFilter === 'all' || date.getMonth() === Number(State.monthFilter)) &&
     (State.yearFilter === 'all' || date.getFullYear() === Number(State.yearFilter));
 }
+function getPeriodExpenses() { return State.gastos.filter(matchesDateFilters); }
 
 // ===== Renderização =====
 function renderRendas() {
@@ -776,10 +835,11 @@ function renderDonut() {
 
 function renderStats() {
   const c = getTotalComprometido();
+  const expenses = getPeriodExpenses();
   document.getElementById('stat-comprometido').textContent = formatCurrency(c);
   document.getElementById('stat-disponivel').textContent = formatCurrency(getTotalRenda() - c);
-  document.getElementById('stat-count').textContent = State.gastos.length;
-  document.getElementById('stat-parcelas').textContent = State.gastos.filter(g => g.tipo === 'parcelado').length;
+  document.getElementById('stat-count').textContent = expenses.length;
+  document.getElementById('stat-parcelas').textContent = expenses.filter(g => g.tipo === 'parcelado').length;
 }
 
 function populateExpenseFilters() {
@@ -836,16 +896,21 @@ function renderGastos() {
             <span>·</span><span>${getExpenseMonthLabel(g)}</span>
             ${isP ? `<span>·</span><span>Total: ${formatCurrency(vt)}</span>` : ''}
             <span>·</span><span style="color: ${c}; font-weight: 600;">${p.toFixed(1)}% da renda</span>
+            ${isP ? `<span class="w-full text-[var(--muted-2)]">Parcelas: ${getInstallmentSchedule(g).join(' · ')}</span>` : ''}
           </div>
         </div>
         <div class="text-right flex-shrink-0">
           <p class="font-display font-bold text-lg" style="color: ${c};">${formatCurrency(g.valor)}</p>
           <div class="dist-bar mt-1 w-24" style="height: 4px;"><div class="dist-bar-fill" style="width: ${Math.min(p, 100)}%; background: ${c};"></div></div>
         </div>
-        <button type="button" class="remove-btn" data-id="${g.id}" title="Remover"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+        <div class="flex items-center gap-1 flex-shrink-0">
+          <button type="button" class="edit-btn remove-btn" data-id="${g.id}" title="Editar" aria-label="Editar gasto"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+          <button type="button" class="remove-btn" data-id="${g.id}" title="Remover" aria-label="Remover gasto"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+        </div>
       </div>`;
   }).join('');
-  list.querySelectorAll('.remove-btn').forEach(btn => btn.addEventListener('click', () => removeGasto(btn.dataset.id)));
+  list.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', () => openEditGasto(btn.dataset.id)));
+  list.querySelectorAll('.remove-btn:not(.edit-btn)').forEach(btn => btn.addEventListener('click', () => removeGasto(btn.dataset.id)));
 }
 
 function renderHistoryChart() {
@@ -914,15 +979,73 @@ function addGasto(data) {
   else if (p >= 70) showToast(`Atenção: ${p.toFixed(0)}% comprometido.`, 'warning');
   else showToast(`Gasto adicionado: ${formatCurrency(data.valor)}/mês`, 'success');
 }
+function openEditGasto(id) {
+  const gasto = State.gastos.find(item => item.id === id);
+  if (!gasto) return;
+  document.getElementById('edit-gasto-id').value = gasto.id;
+  document.getElementById('edit-gasto-descricao').value = gasto.descricao;
+  document.getElementById('edit-gasto-valor').value = formatCurrencyInput(String(Math.round(gasto.valor * 100)));
+  document.getElementById('edit-gasto-categoria').innerHTML = Object.entries(CATEGORIES).map(([value, label]) => `<option value="${value}">${label}</option>`).join('');
+  document.getElementById('edit-gasto-categoria').value = gasto.categoria || 'outros';
+  document.getElementById('edit-gasto-competencia').value = gasto.competencia || getCurrentMonthValue();
+  document.getElementById('edit-gasto-parcelas').value = gasto.parcelas || 2;
+  document.getElementById('edit-gasto-parcelas').disabled = gasto.tipo !== 'parcelado';
+  document.getElementById('edit-gasto-historico').checked = gasto.historico !== false;
+  document.getElementById('edit-gasto-modal').classList.remove('hidden');
+  document.getElementById('edit-gasto-descricao').focus();
+}
+function closeEditGasto() { document.getElementById('edit-gasto-modal').classList.add('hidden'); }
+function saveEditedGasto(event) {
+  event.preventDefault();
+  const gasto = State.gastos.find(item => item.id === document.getElementById('edit-gasto-id').value);
+  const valorInput = document.getElementById('edit-gasto-valor').value;
+  const valor = parseCurrencyInput(valorInput);
+  const competencia = document.getElementById('edit-gasto-competencia').value;
+  const parcelas = Number(document.getElementById('edit-gasto-parcelas').value) || 2;
+  if (!gasto || hasNegativeCurrencyInput(valorInput) || valor <= 0) { showToast('Informe um valor válido', 'warning'); return; }
+  if (!/^\d{4}-\d{2}$/.test(competencia)) { showToast('Informe um mês de referência válido', 'warning'); return; }
+  if (gasto.tipo === 'parcelado' && (parcelas < 2 || parcelas > 48)) { showToast('Parcelas deve ser entre 2 e 48', 'warning'); return; }
+  gasto.descricao = document.getElementById('edit-gasto-descricao').value.trim();
+  gasto.valor = valor; gasto.categoria = document.getElementById('edit-gasto-categoria').value;
+  gasto.competencia = competencia; gasto.parcelas = gasto.tipo === 'parcelado' ? parcelas : 1;
+  gasto.historico = document.getElementById('edit-gasto-historico').checked;
+  if (!gasto.descricao) { showToast('Adicione uma descrição', 'warning'); return; }
+  saveState(); closeEditGasto(); renderAll(); showToast('Gasto atualizado', 'success');
+}
 function removeGasto(id) {
   if (!confirm('Deseja realmente remover este gasto?')) return;
   const item = document.querySelector(`.gasto-item[data-id="${id}"]`);
   if (item) { item.classList.add('removing'); setTimeout(() => { State.gastos = State.gastos.filter(g => g.id !== id); saveState(); renderAll(); showToast('Gasto removido', 'success'); }, 280); }
 }
+function exportBackup() {
+  const backup = { version: 2, exportedAt: new Date().toISOString(), rendas: State.rendas, gastos: State.gastos, goal: State.goal };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url; link.download = `backup_financeiro_${new Date().toISOString().split('T')[0]}.json`;
+  link.click(); URL.revokeObjectURL(url);
+  showToast('Backup exportado com sucesso', 'success');
+}
+function importBackup(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (!Array.isArray(data.rendas) || !Array.isArray(data.gastos)) throw new Error('Formato inválido');
+      if (!confirm('Restaurar este backup substituirá os dados atuais. Deseja continuar?')) return;
+      State.rendas = data.rendas;
+      State.gastos = data.gastos;
+      State.goal = Number(data.goal) > 0 ? Number(data.goal) : 0;
+      saveState(); renderAll(); showToast('Backup restaurado com sucesso', 'success');
+    } catch (error) { showToast('Arquivo JSON inválido', 'danger'); }
+  };
+  reader.onerror = () => showToast('Não foi possível ler o arquivo', 'danger');
+  reader.readAsText(file);
+}
 
 // ===== PDF Export =====
 const PDF_TRANSLATIONS = {
-  'pt-BR': { title: 'Relatório Financeiro', generated: 'Gerado pelo aplicativo MeioDormindo', date: 'Data', income: 'Renda total', committed: 'Comprometido', available: 'Disponível', incomeSources: 'Fontes de Renda', description: 'Descrição', value: 'Valor', expenses: 'Lista de Gastos', type: 'Tipo', monthlyValue: 'Valor/Mês', percent: '% da Renda', fixed: 'Fixo', installments: 'Parcelado', noIncome: 'Nenhuma renda cadastrada', noExpenses: 'Nenhum gasto cadastrado' },
+  'pt-BR': { title: 'Relatório Financeiro', generated: 'Gerado pelo aplicativo MeioDormindo', date: 'Data', income: 'Renda total', committed: 'Comprometido', available: 'Disponível', incomeSources: 'Fontes de Renda', description: 'Descrição', value: 'Valor', expenses: 'Lista de Gastos', type: 'Tipo', category: 'Categoria', period: 'Mês de referência', monthlyValue: 'Valor/Mês', percent: '% da Renda', records: 'Lançamentos', installments: 'Parcelado', fixed: 'Fixo', noIncome: 'Nenhuma renda cadastrada', noExpenses: 'Nenhum gasto cadastrado' },
   en: { title: 'Financial Report', generated: 'Generated by MeioDormindo', date: 'Date', income: 'Total income', committed: 'Committed', available: 'Available', incomeSources: 'Income Sources', description: 'Description', value: 'Value', expenses: 'Expense List', type: 'Type', monthlyValue: 'Amount/Month', percent: '% of Income', fixed: 'Fixed', installments: 'Installment', noIncome: 'No income registered', noExpenses: 'No expenses registered' },
   es: { title: 'Informe Financiero', generated: 'Generado por MeioDormindo', date: 'Fecha', income: 'Ingresos totales', committed: 'Comprometido', available: 'Disponible', incomeSources: 'Fuentes de ingresos', description: 'Descripción', value: 'Valor', expenses: 'Lista de gastos', type: 'Tipo', monthlyValue: 'Valor/Mes', percent: '% de ingresos', fixed: 'Fijo', installments: 'A plazos', noIncome: 'No hay ingresos registrados', noExpenses: 'No hay gastos registrados' },
   fr: { title: 'Rapport Financier', generated: 'Généré par MeioDormindo', date: 'Date', income: 'Revenu total', committed: 'Engagé', available: 'Disponible', incomeSources: 'Sources de revenus', description: 'Description', value: 'Valeur', expenses: 'Liste des dépenses', type: 'Type', monthlyValue: 'Montant/Mois', percent: '% des revenus', fixed: 'Fixe', installments: 'Échelonné', noIncome: 'Aucun revenu enregistré', noExpenses: 'Aucune dépense enregistrée' },
@@ -936,7 +1059,7 @@ const PDF_TRANSLATIONS = {
 
 function pdfText(key) {
   const language = localStorage.getItem(LANGUAGE_KEY) || 'pt-BR';
-  return (PDF_TRANSLATIONS[language] || PDF_TRANSLATIONS['pt-BR'])[key];
+  return (PDF_TRANSLATIONS[language] || PDF_TRANSLATIONS['pt-BR'])[key] || PDF_TRANSLATIONS['pt-BR'][key];
 }
 
 function exportToPDF() {
@@ -987,6 +1110,9 @@ function exportToPDF() {
       doc.setTextColor(26, 26, 26); doc.setFontSize(11); doc.text(money(item[1]), x + 4, y + 13);
     });
     y += 29;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(105, 105, 105);
+    const reportExpenses = getPeriodExpenses();
+    doc.text(`${pdfText('records')}: ${reportExpenses.length}`, margin, y); y += 8;
 
     sectionTitle(pdfText('incomeSources'));
     row([pdfText('description'), pdfText('value')], [pageWidth - margin * 2 - 45, 45], 8);
@@ -994,15 +1120,22 @@ function exportToPDF() {
     else row([pdfText('noIncome'), ''], [pageWidth - margin * 2 - 45, 45]);
 
     y += 5; sectionTitle(pdfText('expenses'));
-    const widths = [72, 38, 45, pageWidth - margin * 2 - 155];
-    row([pdfText('description'), pdfText('type'), pdfText('monthlyValue'), pdfText('percent')], widths, 8);
+    const widths = [43, 27, 28, 32, 30, pageWidth - margin * 2 - 160];
+    row([pdfText('description'), pdfText('type'), pdfText('category'), pdfText('period'), pdfText('monthlyValue'), pdfText('percent')], widths, 8);
     const totalRenda = getTotalRenda();
-    if (State.gastos.length) State.gastos.forEach(gasto => {
+    let totalParcelas = 0;
+    if (reportExpenses.length) reportExpenses.forEach(gasto => {
       const percent = totalRenda > 0 ? gasto.valor / totalRenda * 100 : 0;
       const tipo = gasto.tipo === 'parcelado' ? `${pdfText('installments')} (${gasto.parcelas}x)` : pdfText('fixed');
-      row([gasto.descricao, tipo, money(gasto.valor), `${percent.toFixed(1)}%`], widths);
+      totalParcelas += gasto.tipo === 'parcelado' ? gasto.parcelas : 1;
+      row([gasto.descricao, tipo, getCategoryLabel(gasto.categoria), getExpenseMonthLabel(gasto), money(gasto.valor), `${percent.toFixed(1)}%`], widths);
     });
-    else row([pdfText('noExpenses'), '', '', ''], widths);
+    else row([pdfText('noExpenses'), '', '', '', '', ''], widths);
+    if (reportExpenses.length) {
+      ensureSpace(10);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(26, 26, 26);
+      doc.text(`Total de parcelas: ${totalParcelas}`, margin, y + 4); y += 10;
+    }
 
     doc.save(`Relatorio_Financeiro_${new Date().toISOString().split('T')[0]}.pdf`);
     showToast('Relatorio PDF gerado com sucesso', 'success');
@@ -1156,6 +1289,13 @@ function initCopyDeterrent() {
 // ===== Eventos =====
 function bindEvents() {
   document.getElementById('export-pdf-btn').addEventListener('click', exportToPDF);
+  document.getElementById('export-json-btn').addEventListener('click', exportBackup);
+  document.getElementById('import-json-btn').addEventListener('click', () => document.getElementById('import-json-input').click());
+  document.getElementById('import-json-input').addEventListener('change', event => {
+    const [file] = event.target.files;
+    if (file) importBackup(file);
+    event.target.value = '';
+  });
   
   const rendaDescInput = document.getElementById('renda-descricao');
   const rendaValorInput = document.getElementById('renda-valor');
@@ -1217,9 +1357,15 @@ function bindEvents() {
     });
   });
 
-  document.getElementById('category-filter').addEventListener('change', event => { State.categoryFilter = event.target.value; renderGastos(); });
-  document.getElementById('month-filter').addEventListener('change', event => { State.monthFilter = event.target.value; renderGastos(); });
-  document.getElementById('year-filter').addEventListener('change', event => { State.yearFilter = event.target.value; renderGastos(); });
+  document.getElementById('category-filter').addEventListener('change', event => { State.categoryFilter = event.target.value; renderAll(); });
+  document.getElementById('month-filter').addEventListener('change', event => { State.monthFilter = event.target.value; renderAll(); });
+  document.getElementById('year-filter').addEventListener('change', event => { State.yearFilter = event.target.value; renderAll(); });
+
+  document.getElementById('edit-gasto-form').addEventListener('submit', saveEditedGasto);
+  document.getElementById('close-edit-gasto').addEventListener('click', closeEditGasto);
+  document.getElementById('cancel-edit-gasto').addEventListener('click', closeEditGasto);
+  document.getElementById('edit-gasto-modal').addEventListener('click', event => { if (event.target.id === 'edit-gasto-modal') closeEditGasto(); });
+  document.getElementById('edit-gasto-valor').addEventListener('input', event => { if (!hasNegativeCurrencyInput(event.target.value)) event.target.value = formatCurrencyInput(event.target.value); });
 
   const goalInput = document.getElementById('goal-value');
   goalInput.addEventListener('input', event => { if (!hasNegativeCurrencyInput(event.target.value)) event.target.value = formatCurrencyInput(event.target.value); });
